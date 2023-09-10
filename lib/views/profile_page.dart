@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/User.dart';
 
 class ProfilePage extends StatelessWidget {
-  final user = User('John', 'Doe', 'johndoe@example.com', 'contrasena123');
+  final user = User(
+      'Franca',
+      'Bruzzone',
+      'francabruzzone2@gmail.com',
+      'contrasena123'
+  );
 
   @override
   Widget build(BuildContext context) {

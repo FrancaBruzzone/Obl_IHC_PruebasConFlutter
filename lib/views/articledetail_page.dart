@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/Article.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ArticleDetailPage extends StatelessWidget {
   final Article article;
@@ -29,6 +30,19 @@ class ArticleDetailPage extends StatelessWidget {
             Text(
               article.content,
               style: TextStyle(fontSize: 16.0),
+            ),
+            SizedBox(height: 16.0),
+            TextButton(
+              onPressed: () {
+                launch(article.url);
+              },
+              child: Text(
+                'Leer artículo completo',
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
             ),
           ],
         ),

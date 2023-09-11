@@ -7,7 +7,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Iniciar Sesión'),
+        title: Text('GreenTrace'),
         backgroundColor: Colors.green
       ),
       body: Padding(

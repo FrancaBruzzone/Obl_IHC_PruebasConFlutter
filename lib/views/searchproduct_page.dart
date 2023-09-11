@@ -35,9 +35,6 @@ class SearchProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Buscar Producto'),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -46,14 +43,28 @@ class SearchProductPage extends StatelessWidget {
               onPressed: () {
                 _scanBarcode(context);
               },
-              child: Text('Escanear código de barras'),
+              child: Row(
+              mainAxisSize: MainAxisSize.min, // Alinea elementos en el eje principal (horizontal)
+              children: <Widget>[
+                Icon(Icons.qr_code_2_sharp), // Icono
+                SizedBox(width: 4), // Espacio entre el icono y el texto
+                Text('Escanear código de barras'), // Texto
+              ],
+            )
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 _takePicture(context);
               },
-              child: Text('Sacar foto al producto'),
+              child: Row(
+              mainAxisSize: MainAxisSize.min, // Alinea elementos en el eje principal (horizontal)
+              children: <Widget>[
+                Icon(Icons.camera), // Icono
+                SizedBox(width: 4), // Espacio entre el icono y el texto
+                Text('Foto al producto'), // Texto
+              ],
+            ),
             ),
           ],
         ),

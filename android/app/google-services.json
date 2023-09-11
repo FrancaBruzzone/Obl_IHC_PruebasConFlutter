@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "271153107723",
+    "project_id": "ecoknow-dev",
+    "storage_bucket": "ecoknow-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:271153107723:android:73a6a8ab6ae5f6fd19880e",
+        "android_client_info": {
+          "package_name": "com.example.obl_ihc_pruebasconflutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "271153107723-sishcjtlmfdhrmug83kjsgfn343qdlkt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALcFOQwIi6nmjxGYTJBkv34_o5w5GHwJA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "271153107723-sishcjtlmfdhrmug83kjsgfn343qdlkt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

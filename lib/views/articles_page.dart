@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/Article.dart';
+import 'package:obl_ihc_pruebasconflutter/views/article_description.dart';
 
 class ArticlesPage extends StatelessWidget {
   final List<Article> articles = [
@@ -33,7 +34,12 @@ class ArticlesPage extends StatelessWidget {
               title: Text(articles[index].title),
               subtitle: Text(articles[index].content),
               onTap: () {
-                // Lógica para vista de detalle del artículo
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ArticleDescription(articles[index]),
+                  ),
+                );
               },
             ),
           );

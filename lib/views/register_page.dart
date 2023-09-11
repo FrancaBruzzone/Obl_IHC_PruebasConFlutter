@@ -5,7 +5,7 @@ class RegisterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registrarse'),
+        title: Text('Registrarse en GreenTrace'),
         backgroundColor: Colors.green,
       ),
       body: Padding(

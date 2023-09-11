@@ -39,18 +39,74 @@ class SearchProductPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                _scanBarcode(context);
-              },
-              child: Text('Escanear código de barras'),
+            SizedBox(
+            width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding horizontal
+                child: ElevatedButton(
+                  onPressed: () {
+                    _scanBarcode(context);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.all(16.0),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.qr_code_scanner,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Escanear código de barras',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                _takePicture(context);
-              },
-              child: Text('Sacar foto al producto'),
+            SizedBox(
+              width: double.infinity, // Ancho máximo para igualar el tamaño de los botones
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding horizontal
+                child: ElevatedButton(
+                  onPressed: () {
+                    _takePicture(context);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.all(16.0),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.camera_alt,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Sacar foto a producto',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ],
         ),

@@ -10,10 +10,22 @@ class HomePage extends StatelessWidget {
       length: 3, // Número de pestañas
       child: Scaffold(
         appBar: AppBar(
-          title: Text('¡Bienvenid@! Franca'),
+          backgroundColor: Colors.green,
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('GreenTrace',
+                  style: TextStyle(fontSize: 20)
+              ),
+              SizedBox(height: 2.0),
+              Text('¡Bienvenid@! Franca',
+                  style: TextStyle(fontSize: 16)
+              ),
+            ],
+          ),
           bottom: TabBar(
             tabs: [
-              Tab(text: 'Buscar producto'),
+              Tab(text: 'Productos'),
               Tab(text: 'Artículos'),
               Tab(text: 'Mi perfil'),
             ],

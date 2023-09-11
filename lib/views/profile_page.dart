@@ -15,7 +15,7 @@ class ProfilePage extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start, // Alinea los elementos a la izquierda
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text('Nombre: ${user.nombre}'),
             Text('Apellido: ${user.apellido}'),

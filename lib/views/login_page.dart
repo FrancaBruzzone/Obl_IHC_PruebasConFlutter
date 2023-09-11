@@ -28,7 +28,7 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.0),
-            ElevatedButton(
+            ElevatedButton.icon(
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(Colors.green)
               ),
@@ -40,7 +40,13 @@ class LoginPage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('Iniciar Sesión'),
+              icon: Icon(
+                Icons.login,
+                color: Colors.white,
+              ),
+              label: Text('Iniciar sesión',
+                  style: TextStyle(color: Colors.white)
+              )
             ),
             SizedBox(height: 16.0),
             GestureDetector(

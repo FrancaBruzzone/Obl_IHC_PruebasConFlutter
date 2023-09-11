@@ -32,6 +32,7 @@ class ArticlesPage extends StatelessWidget {
           return Card(
             margin: EdgeInsets.all(8.0),
             child: ListTile(
+              leading: Icon(Icons.article, color: Colors.green),
               title: Text(articles[index].title),
               subtitle: Container(
                 margin: EdgeInsets.only(top: 8.0),

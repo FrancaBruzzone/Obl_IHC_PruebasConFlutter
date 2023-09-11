@@ -52,15 +52,21 @@ class EditProfilePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
+            ElevatedButton.icon(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.green)
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
               ),
               onPressed: () {
                 // Lógica para guardar los cambios en el perfil
                 Navigator.of(context).pop(); // Vuelve a la página de perfil después de guardar
               },
-              child: Text('Guardar'),
+              icon: Icon(
+                Icons.save,
+                color: Colors.white,
+              ),
+              label: Text('Guardar',
+                  style: TextStyle(color: Colors.white)
+              ),
             ),
           ],
         ),

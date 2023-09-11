@@ -38,14 +38,20 @@ class RegisterPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.0),
-            ElevatedButton(
+            ElevatedButton.icon(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.green)
               ),
               onPressed: () {
                 // Agregar la lógica para registrar al usuario
               },
-              child: Text('Registrarse'),
+                icon: Icon(
+                  Icons.person_add,
+                  color: Colors.white,
+                ),
+                label: Text('Registrarse',
+                    style: TextStyle(color: Colors.white)
+                )
             ),
           ],
         ),

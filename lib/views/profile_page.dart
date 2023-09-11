@@ -23,7 +23,7 @@ class ProfilePage extends StatelessWidget {
             _buildProfileInfo('Email:', user.email, Icons.email),
             _buildProfileInfo('Contraseña:', user.contrasena, Icons.lock),
             SizedBox(height: 20),
-            ElevatedButton(
+            ElevatedButton.icon(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
               ),
@@ -34,7 +34,13 @@ class ProfilePage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('Editar'),
+              icon: Icon(
+                Icons.edit,
+                color: Colors.white,
+              ),
+              label: Text('Editar',
+                  style: TextStyle(color: Colors.white)
+              ),
             ),
           ],
         ),

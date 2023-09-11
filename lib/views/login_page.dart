@@ -8,7 +8,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('GreenTrace'),
-        backgroundColor: Colors.green
+        backgroundColor: Colors.green,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -30,23 +30,70 @@ class LoginPage extends StatelessWidget {
             SizedBox(height: 16.0),
             ElevatedButton.icon(
               style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Colors.green)
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
               ),
               onPressed: () {
-                // Navega a la página de inicio
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(),
-                  ),
-                );
+                // Aquí iba el código para el inicio de sesión con correo y contraseña
               },
               icon: Icon(
                 Icons.login,
                 color: Colors.white,
               ),
-              label: Text('Iniciar sesión',
-                  style: TextStyle(color: Colors.white)
-              )
+              label: Text(
+                'Iniciar sesión',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            SizedBox(height: 50.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ElevatedButton.icon(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                    ),
+                  ),
+                  onPressed: () {
+                    // Iniciar sesión con Google
+                  },
+                  icon: Icon(
+                    Icons.g_mobiledata,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    'Google',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                SizedBox(width: 16.0),
+                ElevatedButton.icon(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                    ),
+                  ),
+                  onPressed: () {
+                    // Iniciar sesión con Facebook
+                  },
+                  icon: Icon(
+                    Icons.facebook,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    'Facebook',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 16.0),
             GestureDetector(

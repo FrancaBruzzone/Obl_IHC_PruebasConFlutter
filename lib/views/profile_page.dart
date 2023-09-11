@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/User.dart';
+import 'package:obl_ihc_pruebasconflutter/views/editprofile_page.dart';
 
 class ProfilePage extends StatelessWidget {
   final user = User(
@@ -24,7 +25,11 @@ class ProfilePage extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                print('Se seleccionó editar perfil');
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => EditProfilePage(user),
+                  ),
+                );
               },
               child: Text('Editar Perfil'),
             ),

@@ -1,28 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:obl_ihc_pruebasconflutter/entities/Article.dart';
 
 class ArticlesPage extends StatelessWidget {
+  final List<Article> articles = [
+    Article(
+      title: 'Título del artículo 1',
+      content: 'Contenido del artículo 1...',
+    ),
+    Article(
+      title: 'Título del artículo 2',
+      content: 'Contenido del artículo 2...',
+    ),
+    Article(
+      title: 'Título del artículo 3',
+      content: 'Contenido del artículo 3...',
+    ),
+    Article(
+      title: 'Título del artículo 4',
+      content: 'Contenido del artículo 4...',
+    )
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                print('Se seleccionó escanear código de barras');
+      body: ListView.builder(
+        itemCount: articles.length,
+        itemBuilder: (context, index) {
+          return Card(
+            margin: EdgeInsets.all(8.0),
+            child: ListTile(
+              title: Text(articles[index].title),
+              subtitle: Text(articles[index].content),
+              onTap: () {
+                // Lógica para vista de detalle del artículo
               },
-              child: Text('Escanear código de barras'),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                print('Se seleccionó sacar foto a producto');
-              },
-              child: Text('Sacar foto al producto'),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

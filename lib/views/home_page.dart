@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
             Column(
               children: [
                 Expanded(
-                  child: ArticlesPage(),
+                  child: SearchProductPage(),
                 ),
               ],
             ),
@@ -33,7 +33,7 @@ class HomePage extends StatelessWidget {
             Column(
               children: [
                 Expanded(
-                  child: SearchProductPage(),
+                  child: ArticlesPage(),
                 ),
               ],
             ),

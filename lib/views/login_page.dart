@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/views/home_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -36,6 +37,23 @@ class LoginPage extends StatelessWidget {
                 );
               },
               child: Text('Iniciar Sesión'),
+            ),
+            SizedBox(height: 16.0),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => RegisterPage(),
+                  ),
+                );
+              },
+              child: Text(
+                '¿No tienes una cuenta? Regístrate aquí',
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
             ),
           ],
         ),

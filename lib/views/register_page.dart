@@ -6,6 +6,7 @@ class RegisterPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Registrarse'),
+        backgroundColor: Colors.green,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -38,6 +39,9 @@ class RegisterPage extends StatelessWidget {
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.green)
+              ),
               onPressed: () {
                 // Agregar la lógica para registrar al usuario
               },

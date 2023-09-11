@@ -8,6 +8,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Iniciar Sesión'),
+        backgroundColor: Colors.green
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -28,6 +29,9 @@ class LoginPage extends StatelessWidget {
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.green)
+              ),
               onPressed: () {
                 // Navega a la página de inicio
                 Navigator.of(context).push(

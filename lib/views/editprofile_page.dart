@@ -10,7 +10,8 @@ class EditProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar Perfil'),
+        backgroundColor: Colors.green,
+        title: Text('Editar perfil'),
       ),
       body: Center(
         child: Column(
@@ -44,6 +45,7 @@ class EditProfilePage extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(16.0),
               child: TextFormField(
+                obscureText: true,
                 initialValue: user.contrasena,
                 decoration: InputDecoration(labelText: 'Contraseña'),
                 // Lógica para actualizar la contraseña
@@ -51,6 +53,9 @@ class EditProfilePage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.green)
+              ),
               onPressed: () {
                 // Lógica para guardar los cambios en el perfil
                 Navigator.of(context).pop(); // Vuelve a la página de perfil después de guardar

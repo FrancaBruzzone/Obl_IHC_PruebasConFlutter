@@ -33,7 +33,12 @@ class LoginPage extends StatelessWidget {
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
               ),
               onPressed: () {
-                // Aquí iba el código para el inicio de sesión con correo y contraseña
+                // Navega a la página de inicio
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(),
+                  ),
+                );
               },
               icon: Icon(
                 Icons.login,
@@ -57,6 +62,7 @@ class LoginPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                     ),
+                    minimumSize: MaterialStateProperty.all<Size>(Size(40, 40))
                   ),
                   onPressed: () {
                     // Iniciar sesión con Google
@@ -66,7 +72,7 @@ class LoginPage extends StatelessWidget {
                     color: Colors.white,
                   ),
                   label: Text(
-                    'Google',
+                    '',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -80,6 +86,7 @@ class LoginPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                     ),
+                    minimumSize: MaterialStateProperty.all<Size>(Size(40, 40))
                   ),
                   onPressed: () {
                     // Iniciar sesión con Facebook
@@ -88,10 +95,7 @@ class LoginPage extends StatelessWidget {
                     Icons.facebook,
                     color: Colors.white,
                   ),
-                  label: Text(
-                    'Facebook',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  label: Text(''),
                 ),
               ],
             ),

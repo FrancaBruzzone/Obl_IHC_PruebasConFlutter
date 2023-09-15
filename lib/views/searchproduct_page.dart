@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class SearchProductPage extends StatelessWidget {
   Future<void> _scanBarcode(BuildContext context) async {
@@ -8,6 +11,9 @@ class SearchProductPage extends StatelessWidget {
       String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           "#ff6666", "Cancelar", true, ScanMode.BARCODE);
       print('Código de barras escaneado: $barcodeScanRes');
+
+      await fetchData("https://es.openfoodfacts.org/api/v0/product/"+barcodeScanRes);
+
       // Acá buscar el producto en la BD
     } catch (e) {
       if (e is FormatException) {
@@ -31,6 +37,31 @@ class SearchProductPage extends StatelessWidget {
       print('El usuario canceló la toma de la foto o ocurrió un error.');
     }
   }
+
+
+  Future<void> fetchData(String urlapi) async {
+  final url = Uri.parse(urlapi); // Reemplaza con la URL de la API que deseas consultar
+
+  try {
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      print("todo ok");
+      // Si la solicitud es exitosa (código de estado 200)
+      final data = jsonDecode(response.body);
+      // data contiene la respuesta de la API en formato JSON
+
+      // Aquí puedes procesar los datos según tus necesidades
+      print('Datos recibidos: $data');
+    } else {
+      // Si la solicitud no es exitosa, maneja el error
+      print('Error en la solicitud: ${response.statusCode}');
+    }
+  } catch (e) {
+    // Maneja las excepciones si ocurren durante la solicitud
+    print('Error en la solicitud: $e');
+  }
+}
 
   @override
   Widget build(BuildContext context) {

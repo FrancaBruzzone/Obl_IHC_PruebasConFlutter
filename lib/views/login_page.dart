@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/views/home_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/recoverypassword_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
 
 class LoginPage extends StatelessWidget {
@@ -47,6 +48,23 @@ class LoginPage extends StatelessWidget {
               label: Text(
                 'Iniciar sesión',
                 style: TextStyle(color: Colors.white),
+              ),
+            ),
+            SizedBox(height: 10.0),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => RecoveryPasswordPage(),
+                  ),
+                );
+              },
+              child: Text(
+                'Olvidé mi contraseña',
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
               ),
             ),
             SizedBox(height: 50.0),

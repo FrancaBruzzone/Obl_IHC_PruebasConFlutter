@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/views/articles_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/profile_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/searchproduct_page.dart';
 
@@ -14,13 +15,7 @@ class HomePage extends StatelessWidget {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('GreenTrace',
-                  style: TextStyle(fontSize: 20)
-              ),
-              SizedBox(height: 2.0),
-              Text('¡Bienvenid@! Franca',
-                  style: TextStyle(fontSize: 16)
-              ),
+              Text('GreenTrace', style: TextStyle(fontSize: 24))
             ],
           ),
           bottom: TabBar(
@@ -63,5 +58,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-

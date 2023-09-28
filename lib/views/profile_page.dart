@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/User.dart';
 import 'package:obl_ihc_pruebasconflutter/views/editprofile_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 
 class ProfilePage extends StatelessWidget {
   final user = User(
-      'Franca',
-      'Bruzzone',
-      'francabruzzone2@gmail.com',
-      'contrasena123'
+    'Franca',
+    'Bruzzone',
+    'francabruzzone2@gmail.com',
+    'contrasena123'
   );
 
   @override
@@ -38,9 +39,26 @@ class ProfilePage extends StatelessWidget {
                 Icons.edit,
                 color: Colors.white,
               ),
-              label: Text('Editar',
-                  style: TextStyle(color: Colors.white)
+              label: Text('Editar', style: TextStyle(color: Colors.white)),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton.icon(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
               ),
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                      (route) => false,
+                );
+              },
+              icon: Icon(
+                Icons.exit_to_app, // Icono de cierre de sesión
+                color: Colors.white,
+              ),
+              label: Text('Salir', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

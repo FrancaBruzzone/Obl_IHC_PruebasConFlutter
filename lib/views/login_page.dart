@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:obl_ihc_pruebasconflutter/views/app.dart';
 import 'package:obl_ihc_pruebasconflutter/views/home_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -12,67 +15,115 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final TextEditingController _emailController = TextEditingController(text: "demo@greentrace.uy");
-  final TextEditingController _passwordController = TextEditingController(text: "demo123");
+  late TextEditingController _emailController = TextEditingController();
+  late TextEditingController _passwordController = TextEditingController();
+
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+
+  bool isError = false;
+
+  void setDemo() {
+    setState(() {
+      _emailController = TextEditingController(text: "demo@greentrace.uy");
+      _passwordController = TextEditingController(text: "demo123");
+    });
+  }
 
   Future<void> _signInWithEmailAndPassword() async {
     try {
       final String email = _emailController.text.trim();
       final String password = _passwordController.text.trim();
 
-      // Utiliza Firebase Authentication para iniciar sesión con correo y contraseña
       await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-
-
       print("OK al iniciar sesión:");
       // Si la autenticación tiene éxito, puedes redirigir al usuario a la pantalla principal o realizar otras acciones
-      // Por ejemplo: 
+      // Por ejemplo:
 
       print(await _auth.currentUser?.displayName);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
-     
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
     } catch (e) {
       // Si ocurre un error durante la autenticación, muestra un mensaje de error
       print("Error al iniciar sesión: $e");
+      setState(() {
+        isError = true;
+      });
     }
   }
 
-Future<void> _signInWithGoogle() async {
-  print('Iniciando consulta a google por usuario');
+  Future<void> _signInWithGoogle() async {
     try {
-      final UserCredential userCredential = await _auth.signInWithPopup(
-        GoogleAuthProvider(),
-      );
-      final User user = userCredential.user!;
-      print('Inicio de sesión exitoso: ${user.displayName}');
-      // Redirige a la pantalla principal o realiza otras acciones después del inicio de sesión.
-    } catch (e) {
-      print('Error al iniciar sesión con Google: $e');
+      if (kIsWeb) {
+        final UserCredential userCredential = await _auth.signInWithPopup(
+          GoogleAuthProvider(),
+        );
+        final User user = userCredential.user!;
+        print('Inicio de sesión exitoso------------>: ${user.displayName}');
+      } else {
+        final GoogleSignInAccount? googleSignInAccount =
+            await googleSignIn.signIn();
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount!.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+
+        final UserCredential userCredential =
+            await _auth.signInWithCredential(credential);
+
+        final User user = userCredential.user!;
+
+        print('Usuario autenticado con Google: ${user.displayName}');
+      }
+    } catch (error) {
+      print('Error al iniciar sesión con Google: $error');
+      setState(() {
+        isError = true;
+      });
     }
   }
 
-  Future<UserCredential> signInWithFacebook() async {
-  // Trigger the sign-in flow
+  Future<UserCredential?> signInWithFacebook() async {
+    try {
+      // Trigger the sign-in flow
+      final LoginResult loginResult = await FacebookAuth.instance.login();
 
- final LoginResult loginResult = await FacebookAuth.instance.login();
+      // Create a credential from the access token
+      final OAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
-  // Create a credential from the access token
-  final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
-    return _auth.signInWithCredential(facebookAuthCredential);
+      // Sign in with the credential
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(facebookAuthCredential);
 
- 
- 
-
-  // Once signed in, return the UserCredential
-
-}
+      // Once signed in, return the UserCredential
+      return userCredential;
+    } catch (e) {
+      print('Error al iniciar sesión con Facebook: $e');
+      setState(() {
+        isError = true;
+      });
+      return null; // Maneja el error y devuelve null o un valor adecuado en caso de error.
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+/*     var appState = context.watch<MyAppState>();
+    var pair = appState.user;
+    print("------------>" + pair.toString());
+    if (pair)
+      Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(),
+                  ),
+                ); */
+
     return Scaffold(
       appBar: AppBar(
         title: Text('GreenTrace'),
@@ -83,6 +134,11 @@ Future<void> _signInWithGoogle() async {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Image.asset(
+              'images/GREENTRACE.png',
+              width: 50.0, // Ancho de la imagen
+              height: 50.0, // Alto de la imagen
+            ),
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
@@ -102,7 +158,7 @@ Future<void> _signInWithGoogle() async {
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
               ),
-             /*  onPressed: () {
+              /*  onPressed: () {
                 // Navega a la página de inicio
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -138,14 +194,14 @@ Future<void> _signInWithGoogle() async {
                       minimumSize:
                           MaterialStateProperty.all<Size>(Size(40, 40))),
                   onPressed: _signInWithGoogle,
-                    // Iniciar sesión con Google
-                  
+                  // Iniciar sesión con Google
+
                   icon: Icon(
                     Icons.g_mobiledata,
                     color: Colors.white,
                   ),
                   label: Text(
-                    '',
+                    'Google',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -168,14 +224,21 @@ Future<void> _signInWithGoogle() async {
                     Icons.facebook,
                     color: Colors.white,
                   ),
-                  label: Text(''),
+                  label: Text('Facebook'),
                 ),
-
-                
-                
               ],
-              
             ),
+
+            isError
+                ? Text(
+                    'Error al iniciar sesión. Por favor, inténtalo de nuevo.',
+                    style: TextStyle(
+                      color: Colors
+                          .red, // Puedes personalizar el estilo del mensaje de error
+                    ),
+                  )
+                : SizedBox(), // Espacio en blanco si no hay error
+
             SizedBox(height: 26.0),
             Text(
               'Usuario DEMO: demo@greentrace.uy Contraseña demo123',
@@ -184,8 +247,17 @@ Future<void> _signInWithGoogle() async {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            GestureDetector(
+              onTap: setDemo,
+              child: Text(
+                'Iniciar con Demo?',
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
             SizedBox(height: 16.0),
-
             GestureDetector(
               onTap: () {
                 Navigator.of(context).push(
@@ -195,7 +267,7 @@ Future<void> _signInWithGoogle() async {
                 );
               },
               child: Text(
-                '¿No tienes una cuenta? Regístrate aquí.' ,
+                '¿No tienes una cuenta? Regístrate aquí.',
                 style: TextStyle(
                   color: Colors.blue,
                   decoration: TextDecoration.underline,

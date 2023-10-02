@@ -3,6 +3,8 @@ import 'package:obl_ihc_pruebasconflutter/views/articles_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/profile_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/searchproduct_page.dart';
 
+import 'login_page.dart';
+
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -10,17 +12,24 @@ class HomePage extends StatelessWidget {
       length: 3, // Número de pestañas
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back), // Icono de flecha de retroceso
+            onPressed: () {
+              // Navegar de regreso a la página anterior
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => LoginPage(),
+                ),
+              );
+            },
+          ),
           backgroundColor: Colors.green,
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('GreenTrace',
-                  style: TextStyle(fontSize: 20)
-              ),
+              Text('GreenTrace', style: TextStyle(fontSize: 20)),
               SizedBox(height: 2.0),
-              Text('¡Bienvenid@! Franca',
-                  style: TextStyle(fontSize: 16)
-              ),
+              Text('¡Bienvenid@! Franca', style: TextStyle(fontSize: 16)),
             ],
           ),
           bottom: TabBar(
@@ -63,5 +72,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-

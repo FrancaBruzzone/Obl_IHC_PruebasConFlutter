@@ -66,9 +66,17 @@ class ProductDetailPage extends StatelessWidget {
               if (showDetails) ...[
                 SizedBox(height: 20),
                 Center(
+                  child:
+                Image.network(
+                  product.imageUrl,
+                  width: 60,
+                  // Esto utiliza el administrador de caché predeterminado
+                )),
+                Center(
                   child: ElevatedButton.icon(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.green),
                     ),
                     onPressed: () {
                       Navigator.of(context).push(
@@ -81,7 +89,8 @@ class ProductDetailPage extends StatelessWidget {
                       Icons.edit,
                       color: Colors.white,
                     ),
-                    label: Text('Editar',
+                    label: Text(
+                      'Editar',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),

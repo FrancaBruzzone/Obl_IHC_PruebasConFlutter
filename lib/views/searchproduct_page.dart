@@ -4,18 +4,42 @@ import 'package:image_picker/image_picker.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
 import 'package:obl_ihc_pruebasconflutter/views/addproduct_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 
 class SearchProductPage extends StatelessWidget {
+  
   Future<void> _scanBarcode(BuildContext context) async {
     try {
       String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           "#ff6666", "Cancelar", true, ScanMode.BARCODE);
       print('Código de barras escaneado: $barcodeScanRes');
 
-      Product scannedProduct = getProductInfo(barcodeScanRes);
+      // Muestra el indicador de carga mientras se obtiene la información del producto
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Container(
+              width: 80, // Establece el ancho deseado
+              height: 80, // Establece la altura deseada
+              color: Colors.white.withOpacity(0.1),
+              child:
+                  LoadingIndicator(), // Muestra el widget de indicador de carga
+            ),
+          );
+        },
+      );
 
-      if (scannedProduct == null) {
-        List<Product> recommendedProducts = getRecommendedProducts(scannedProduct);
+      Product? scannedProduct = await getProductInfo(barcodeScanRes);
+
+      // Cierra el diálogo de carga
+      Navigator.pop(context);
+
+      if (scannedProduct != null) {
+        List<Product> recommendedProducts =
+            getRecommendedProducts(scannedProduct);
 
         Navigator.push(
           context,
@@ -57,15 +81,25 @@ class SearchProductPage extends StatelessWidget {
     }
   }
 
-  Product getProductInfo(String barcode) {
-    return Product(
-      name: 'Nombre del Producto',
-      description: 'Descripción del Producto',
-      imageUrl: 'URL de la imagen del Producto',
-      environmentalInfo: 'Información Ambiental del Producto',
-      category: 'Categoría del Producto',
-      environmentalCategory: 'Categorización Ambiental del Producto',
-    );
+  Future<Product?> getProductInfo(String barcode) async {
+    Map? data;
+    http.Response response = await http
+        .get(Uri.parse('https://ihc.gil.com.uy/api/products/$barcode'));
+    data = json.decode(response.body);
+    print("DATA OBTENIDA: ${data}");
+
+    if (data != null && data["error"] == null) {
+      return Product(
+        name: data["brand"] + " " + data["name"] + " " + data["quantity"],
+        description: data["description"],
+        imageUrl: data["imageUrl"],
+        environmentalInfo: data["environmentalInfo"],
+        category: data["category"],
+        environmentalCategory: data["environmentalCategory"],
+      );
+    } else {
+      return null;
+    }
   }
 
   List<Product> getRecommendedProducts(Product scannedProduct) {
@@ -76,7 +110,8 @@ class SearchProductPage extends StatelessWidget {
         imageUrl: 'URL de la imagen del Producto Recomendado 1',
         environmentalInfo: 'Información Ambiental del Producto Recomendado 1',
         category: 'Categoría del Producto Recomendado 1',
-        environmentalCategory: 'Categorización Ambiental del Producto Recomendado 1',
+        environmentalCategory:
+            'Categorización Ambiental del Producto Recomendado 1',
       ),
       Product(
         name: 'Producto Recomendado 2',
@@ -84,7 +119,8 @@ class SearchProductPage extends StatelessWidget {
         imageUrl: 'URL de la imagen del Producto Recomendado 2',
         environmentalInfo: 'Información Ambiental del Producto Recomendado 2',
         category: 'Categoría del Producto Recomendado 2',
-        environmentalCategory: 'Categorización Ambiental del Producto Recomendado 2',
+        environmentalCategory:
+            'Categorización Ambiental del Producto Recomendado 2',
       )
     ];
 
@@ -99,15 +135,17 @@ class SearchProductPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             SizedBox(
-            width: double.infinity,
+              width: double.infinity,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding horizontal
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0), // Padding horizontal
                 child: ElevatedButton(
                   onPressed: () {
                     _scanBarcode(context);
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.green),
                     padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
                       EdgeInsets.all(16.0),
                     ),
@@ -134,15 +172,18 @@ class SearchProductPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             SizedBox(
-              width: double.infinity, // Ancho máximo para igualar el tamaño de los botones
+              width: double
+                  .infinity, // Ancho máximo para igualar el tamaño de los botones
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding horizontal
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0), // Padding horizontal
                 child: ElevatedButton(
                   onPressed: () {
                     _takePicture(context);
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.green),
                     padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
                       EdgeInsets.all(16.0),
                     ),

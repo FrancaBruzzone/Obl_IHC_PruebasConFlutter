@@ -16,7 +16,9 @@ class SearchProductPage extends StatelessWidget {
           "#ff6666", "Cancelar", true, ScanMode.BARCODE);
       print('Código de barras escaneado: $barcodeScanRes');
 
-      // Muestra el indicador de carga mientras se obtiene la información del producto
+    
+
+      if(barcodeScanRes!="-1"){
       showDialog(
         context: context,
         builder: (context) {
@@ -31,6 +33,8 @@ class SearchProductPage extends StatelessWidget {
           );
         },
       );
+      }
+      // Muestra el indicador de carga mientras se obtiene la información del producto
 
       Product? scannedProduct = await getProductInfo(barcodeScanRes);
 

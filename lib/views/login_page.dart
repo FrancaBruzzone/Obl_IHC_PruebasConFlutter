@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/views/home_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/recoverypassword_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+
+
+  void _saveData(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("token", value);
+  }
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -35,6 +42,7 @@ class LoginPage extends StatelessWidget {
               ),
               onPressed: () {
                 // Navega a la página de inicio
+                _saveData("yes");
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => HomePage(),

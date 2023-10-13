@@ -3,8 +3,16 @@ import 'package:obl_ihc_pruebasconflutter/views/articles_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/profile_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/searchproduct_page.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatelessWidget {
+
+/*   void _saveData(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("token", "yes");
+
+  } */
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(

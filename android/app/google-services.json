@@ -1,0 +1,76 @@
+{
+  "project_info": {
+    "project_number": "661351503747",
+    "project_id": "ihc-greentrace-app",
+    "storage_bucket": "ihc-greentrace-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661351503747:android:3532e778fa65cd2a5548b6",
+        "android_client_info": {
+          "package_name": "com.example.obl_ihc_pruebasconflutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "661351503747-gak817vrek3ni1d622osrke6les87p4k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSO3YOu7ne7fflp6U5xbvVjpXFfsH5Pro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "661351503747-gak817vrek3ni1d622osrke6les87p4k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661351503747:android:f917525a8cdcf65e5548b6",
+        "android_client_info": {
+          "package_name": "com.example.usersapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "661351503747-4063od8kmhfie8nc06nhvm2984i8l98r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.usersapp",
+            "certificate_hash": "2ac17b8bbc93fc07e97f53d81f40f23654b4cffd"
+          }
+        },
+        {
+          "client_id": "661351503747-gak817vrek3ni1d622osrke6les87p4k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSO3YOu7ne7fflp6U5xbvVjpXFfsH5Pro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "661351503747-gak817vrek3ni1d622osrke6les87p4k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

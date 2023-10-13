@@ -38,6 +38,7 @@ class SearchProductPage extends StatelessWidget {
       Navigator.pop(context);
 
       if (scannedProduct != null) {
+        
         List<Product> recommendedProducts =
             getRecommendedProducts(scannedProduct);
 
@@ -54,7 +55,9 @@ class SearchProductPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AddProductPage(),
+            builder: (context) => AddProductPage(
+              productCode: barcodeScanRes,
+            ),
           ),
         );
       }

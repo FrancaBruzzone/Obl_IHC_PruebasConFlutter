@@ -10,8 +10,8 @@ class ArticlesPage extends StatefulWidget {
 }
 
 class _ArticlesPageState extends State<ArticlesPage> {
-   List<Article> articles = [
-   /*  Article(
+  List<Article> articles = [
+    /*  Article(
       title: '¿Qué es la huella de carbono?',
       content:
           'La huella de carbono representa el volumen total de gases de efecto invernadero (GEI) que producen las actividades económicas y cotidianas del ser humano. Conocer el dato —expresado en toneladas de CO2 emitidas— es importante para tomar medidas y poner en marcha las iniciativas necesarias para reducirla al máximo, empezando por cada uno de nosotros en nuestro día a día.',
@@ -35,31 +35,58 @@ class _ArticlesPageState extends State<ArticlesPage> {
     }
   }
 
+
+
   Map? data;
   List? articlesData;
-  
+
   getArticles() async {
     http.Response response =
         await http.get(Uri.parse('https://ihc.gil.com.uy/api/articles'));
     data = json.decode(response.body);
     articlesData = data?['articles'];
 
-     if (articlesData != null) {
-    final List<Article> arts = articlesData!.map((a) => Article(
-      title: a['title'] as String,
-      content: a['description'] as String,
-      url: a['links'][0] as String, // Por ejemplo, aquí se toma el primer enlace de la lista
-    )).toList();
+    if (articlesData != null) {
+      final List<Article> arts = articlesData!
+          .map((a) => Article(
+                type: a['category'] as String,
+                title: a['title'] as String,
+                content: a['description'] as String,
+                url: a['links'][0]
+                    as String, // Por ejemplo, aquí se toma el primer enlace de la lista
+              ))
+          .toList();
 
-    setState(() {
-      articles = arts;
-    });
-  }
+      setState(() {
+        articles = arts;
+      });
+    }
   }
 
-//pull to refresh 
+//pull to refresh
   Future<void> _refreshList() async {
     await getArticles();
+  }
+
+    Icon getTypeArticle(String type) {
+    switch (type) {
+      case "event":
+        return const Icon(Icons.event, color: Colors.green);
+      case "article":
+        return const Icon(Icons.article, color: Colors.green);
+      case "message":
+        return const Icon(Icons.message, color: Colors.green);
+      case "emergency":
+        return const Icon(Icons.emergency, color: Colors.green);
+      case "podcast":
+        return const Icon(Icons.podcasts, color: Colors.green);
+      case "warning":
+        return const Icon(Icons.warning, color: Colors.green);
+      case "recycling":
+        return const Icon(Icons.recycling, color: Colors.green);
+      default:
+        return const Icon(Icons.article, color: Colors.green);
+    }
   }
 
   @override
@@ -68,35 +95,37 @@ class _ArticlesPageState extends State<ArticlesPage> {
     getArticles();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: _refreshList,
-        child:ListView.builder(
-        itemCount: articles.length,
-        itemBuilder: (context, index) {
-          return Card(
-            margin: EdgeInsets.all(8.0),
-            child: ListTile(
-              leading: Icon(Icons.article, color: Colors.green),
-              title: Text(articles[index].title),
-              subtitle: Container(
-                margin: EdgeInsets.only(top: 8.0),
-                child: Text(_getFirstWords(articles[index].content) + '...'),
+        child: ListView.builder(
+          itemCount: articles.length,
+          itemBuilder: (context, index) {
+            return Card(
+              margin: const EdgeInsets.all(8.0),
+              child: ListTile(
+                leading: getTypeArticle(articles[index].type! ),
+                title: Text(articles[index].title),
+                subtitle: Container(
+                  margin: const EdgeInsets.only(top: 8.0),
+                  child: Text(_getFirstWords(articles[index].content) + '...'),
+                ),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ArticleDetailPage(articles[index]),
+                    ),
+                  );
+                },
               ),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ArticleDetailPage(articles[index]),
-                  ),
-                );
-              },
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
-    ),
     );
   }
 }

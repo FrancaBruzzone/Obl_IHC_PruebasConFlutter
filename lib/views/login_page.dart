@@ -1,9 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:obl_ihc_pruebasconflutter/views/home_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/recoverypassword_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
 
 class LoginPage extends StatelessWidget {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,12 +23,14 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextField(
+              controller: emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
               ),
             ),
             SizedBox(height: 16.0),
             TextField(
+              controller: passwordController,
               obscureText: true, // Para ocultar la contraseña
               decoration: InputDecoration(
                 labelText: 'Contraseña',
@@ -33,13 +41,24 @@ class LoginPage extends StatelessWidget {
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
               ),
-              onPressed: () {
-                // Navega a la página de inicio
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(),
-                  ),
-                );
+              onPressed: () async {
+                try {
+                  final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: emailController.text,
+                    password: passwordController.text,
+                  );
+
+                  if (userCredential.user != null) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  // Credenciales incorrectas o cuenta inexistente
+                  print('Error de autenticación: $e');
+                }
               },
               icon: Icon(
                 Icons.login,
@@ -68,54 +87,87 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 50.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ElevatedButton.icon(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
+            Center(
+              child: Column(
+                children: <Widget>[
+                  ElevatedButton.icon(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                        minimumSize: MaterialStateProperty.all<Size>(Size(40, 40))
                     ),
-                    minimumSize: MaterialStateProperty.all<Size>(Size(40, 40))
-                  ),
-                  onPressed: () {
-                    // Iniciar sesión con Google
-                  },
-                  icon: Icon(
-                    Icons.g_mobiledata,
-                    color: Colors.white,
-                  ),
-                  label: Text(
-                    '',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                SizedBox(width: 16.0),
-                ElevatedButton.icon(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
+                    onPressed: () async {
+                      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+                      final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+                      final AuthCredential credential = GoogleAuthProvider.credential(
+                        accessToken: googleAuth.accessToken,
+                        idToken: googleAuth.idToken,
+                      );
+
+                      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+                      if (userCredential.user != null) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(),
+                          ),
+                        );
+                      }
+                    },
+                    icon: Icon(
+                      Icons.g_mobiledata,
+                      color: Colors.white,
                     ),
-                    minimumSize: MaterialStateProperty.all<Size>(Size(40, 40))
+                    label: Text(
+                      'Iniciar sesión con Google',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                  onPressed: () {
-                    // Iniciar sesión con Facebook
-                  },
-                  icon: Icon(
-                    Icons.facebook,
-                    color: Colors.white,
-                  ),
-                  label: Text(''),
-                ),
-              ],
+                  SizedBox(width: 16.0),
+                  ElevatedButton.icon(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                        minimumSize: MaterialStateProperty.all<Size>(Size(40, 40))
+                    ),
+                    onPressed: () async {
+                      final LoginResult result = await FacebookAuth.instance.login(permissions: ["email"]);
+
+                      if (result.status == LoginStatus.success) {
+                        final AccessToken accessToken = result.accessToken!;
+                        final AuthCredential credential = FacebookAuthProvider.credential(accessToken.token);
+                        final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+                        if (userCredential.user != null) {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => HomePage(),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    icon: Icon(
+                      Icons.facebook,
+                      color: Colors.white,
+                    ),
+                    label: Text(
+                      'Iniciar sesión con Facebook',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )
+                ],
+              ),
             ),
             SizedBox(height: 16.0),
             GestureDetector(

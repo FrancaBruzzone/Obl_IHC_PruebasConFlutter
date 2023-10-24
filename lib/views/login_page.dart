@@ -13,9 +13,25 @@ import 'package:shared_preferences/shared_preferences.dart';
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("token", value);
   }
+
+  
+
+
 class LoginPage extends StatefulWidget {
   @override
   State<LoginPage> createState() => _LoginPageState();
+}
+
+
+Future<UserCredential> _signInWithFacebook() async {
+  // Trigger the sign-in flow
+  final LoginResult loginResult = await FacebookAuth.instance.login();
+
+  // Create a credential from the access token
+  final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+  // Once signed in, return the UserCredential
+  return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -178,7 +194,9 @@ class _LoginPageState extends State<LoginPage> {
                         minimumSize: MaterialStateProperty.all<Size>(Size(40, 40))
                     ),
                     onPressed: () async {
-                      final LoginResult result = await FacebookAuth.instance.login(permissions: ["email"]);
+
+                      _signInWithFacebook();
+                      /* final LoginResult result = await FacebookAuth.instance.login(permissions: ["email"]);
 
                       if (result.status == LoginStatus.success) {
                         final AccessToken accessToken = result.accessToken!;
@@ -192,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           );
                         }
-                      }
+                      } */
                     },
                     icon: Icon(
                       Icons.facebook,
@@ -209,6 +227,7 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 16.0),
             GestureDetector(
               onTap: () {
+                
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => RegisterPage(),

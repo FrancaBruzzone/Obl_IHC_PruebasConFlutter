@@ -128,7 +128,6 @@ class LoginPage extends StatelessWidget {
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  SizedBox(width: 16.0),
                   ElevatedButton.icon(
                     style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),

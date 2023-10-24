@@ -5,10 +5,33 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:obl_ihc_pruebasconflutter/views/home_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/recoverypassword_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPage extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+
+
+  void _saveData(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("token", value);
+  }
+class LoginPage extends StatefulWidget {
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  late TextEditingController emailController = TextEditingController();
+
+  late TextEditingController passwordController = TextEditingController();
+
+  bool isError = false;
+  void setDemo() {
+    setState(() {
+      emailController = TextEditingController(text: "demo@greentrace.uy");
+      passwordController = TextEditingController(text: "demo1234");
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +72,7 @@ class LoginPage extends StatelessWidget {
                   );
 
                   if (userCredential.user != null) {
+                     _saveData("yes");
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder: (context) => HomePage(),
@@ -86,7 +110,20 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 50.0),
+            SizedBox(height: 10.0),
+            GestureDetector(
+              onTap: () {
+                setDemo();
+              },
+              child: Text(
+                'Iniciar Demo',
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+            SizedBox(height: 12.0),
             Center(
               child: Column(
                 children: <Widget>[
@@ -112,6 +149,7 @@ class LoginPage extends StatelessWidget {
                       final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
 
                       if (userCredential.user != null) {
+                         _saveData("yes");
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => HomePage(),

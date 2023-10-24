@@ -4,13 +4,122 @@ import 'package:obl_ihc_pruebasconflutter/views/recoverypassword_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 
   void _saveData(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("token", value);
   }
-class LoginPage extends StatelessWidget {
+
+
+class LoginPage extends StatefulWidget {
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+
+  late TextEditingController _emailController = TextEditingController();
+  late TextEditingController _passwordController = TextEditingController();
+
+
+  bool isError = false;
+  void setDemo() {
+    setState(() {
+      _emailController = TextEditingController(text: "demo@greentrace.uy");
+      _passwordController = TextEditingController(text: "demo123");
+    });
+  }
+
+Future<void> _signInWithFacebook() async {
+    final result = await FacebookAuth.instance.login();
+    final accessToken = result.accessToken;
+    // Aquí puedes usar accessToken para autenticar al usuario con Firebase
+  }
+
+  Future<User?> _handleSignIn() async {
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
+      debugPrint(googleSignInAccount.toString());
+      debugPrint("el usuario logueado es:  ${googleSignInAccount.toString()}");
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+        final UserCredential userCredential =
+            await _auth.signInWithCredential(credential);
+        final User? user = userCredential.user;
+        debugPrint("el usuario logueado es:  ${user.toString()}");
+
+        return user;
+      }
+    } catch (error) {
+      print('Error al iniciar sesión con Google: $error');
+      return null;
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    debugPrint(googleUser?.displayName.toString());
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    var cred = await FirebaseAuth.instance.signInWithCredential(credential);
+
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => HomePage()));
+  }
+
+
+  Future<void> _signInWithEmailAndPassword() async {
+    try {
+      final String email = _emailController.text.trim();
+      final String password = _passwordController.text.trim();
+
+      await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      print("OK al iniciar sesión:");
+      // Si la autenticación tiene éxito, puedes redirigir al usuario a la pantalla principal o realizar otras acciones
+      // Por ejemplo:
+
+      print(await _auth.currentUser?.displayName);
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
+    } catch (e) {
+      // Si ocurre un error durante la autenticación, muestra un mensaje de error
+      debugPrint("Error al iniciar sesión: $e");
+      setState(() {
+        isError = true;
+      });
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

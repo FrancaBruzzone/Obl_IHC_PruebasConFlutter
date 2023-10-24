@@ -53,10 +53,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDSO3YOu7ne7fflp6U5xbvVjpXFfsH5Pro',
-    appId: '1:661351503747:android:3532e778fa65cd2a5548b6',
-    messagingSenderId: '661351503747',
-    projectId: 'ihc-greentrace-app',
-    storageBucket: 'ihc-greentrace-app.appspot.com',
+    apiKey: 'AIzaSyAjmnW34DiTIeYR_69bnnR36Oi3QletyAk',
+    appId: '1:108363526731:android:3ed3a561606ebb5f1393ce',
+    messagingSenderId: '108363526731',
+    projectId: 'greentrace-67f9f',
+    storageBucket: 'greentrace-67f9f.appspot.com',
   );
 }

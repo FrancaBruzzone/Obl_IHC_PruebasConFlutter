@@ -1,21 +1,98 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
 import 'package:obl_ihc_pruebasconflutter/views/editproduct_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'package:obl_ihc_pruebasconflutter/views/recommendedproducts_section.dart';
 
-class ProductDetailPage extends StatelessWidget {
+class ProductDetailPage extends StatefulWidget {
   final Product product;
-  final List<Product> recommendedProducts;
+  late List<Product> recommendedProducts;
   final bool showDetails;
+  final bool ask;
+
 
   ProductDetailPage({
     required this.product,
     required this.recommendedProducts,
     this.showDetails = true,
+    required this.ask,
   });
 
   @override
+  State<ProductDetailPage> createState() =>
+      _ProductDetailPageState(product, recommendedProducts, showDetails, ask);
+}
+
+class _ProductDetailPageState extends State<ProductDetailPage> {
+  final Product product;
+  late List<Product> recommendedProducts;
+  final bool showDetails;
+  bool loadingRecommendedProducts = true;
+  bool ask = false;
+
+  _ProductDetailPageState(
+      this.product, this.recommendedProducts, this.showDetails, this.ask);
+
+
+  @override
+  void initState() {
+    super.initState();
+    getRecommendedProducts(product,ask);
+/*     this.recommendedProducts = [
+      Product(category: "",description: "", imageUrl: "", environmentalCategory: "", environmentalInfo: "", name: "nombre1"),
+      Product(category: "",description: "", imageUrl: "", environmentalCategory: "", environmentalInfo: "", name: "nombre2")
+    ]; */
+  }
+
+  Future<void> getRecommendedProducts(Product scannedProduct, bool ask) async {
+    if (!ask) return;
+    try {
+      Map<String, String> headers = {
+        'Authorization': 'ihc',
+      };
+
+      http.Response response = await http.get(
+          Uri.parse(
+              'https://ihc.gil.com.uy/api/querys?filter=${scannedProduct.description}'),
+          headers: headers);
+      var data = json.decode(response.body);
+      List<Product> recommendedProd = [];
+      if (data != null) {
+        for (var p in data) {
+          var x = Product(
+              name: p["name"],
+              description: p["description"],
+              imageUrl: "",
+              environmentalInfo: p["environmentalInfo"],
+              category: p["category"],
+              environmentalCategory: p["environmentalCategory"]);
+
+          recommendedProd.add(x);
+        }
+
+        setState(() {
+          recommendedProducts = recommendedProd;
+          loadingRecommendedProducts = false;
+        });
+      } else {
+                setState(() {
+          recommendedProducts = recommendedProd;
+          loadingRecommendedProducts = false;
+        });
+      }
+    } catch (e) {
+              setState(() {
+          recommendedProducts = [];
+          loadingRecommendedProducts = false;
+        });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    //getRecommendedProducts(product);
     return Scaffold(
       appBar: AppBar(
         title: Text('Detalles del producto'),
@@ -29,7 +106,7 @@ class ProductDetailPage extends StatelessWidget {
             children: [
               SizedBox(height: 16),
               Text(
-                product.name,
+                widget.product.name,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -44,7 +121,7 @@ class ProductDetailPage extends StatelessWidget {
                 ),
               ),
               Text(
-                product.environmentalInfo,
+                widget.product.environmentalInfo,
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -58,17 +135,16 @@ class ProductDetailPage extends StatelessWidget {
                 ),
               ),
               Text(
-                product.description,
+                widget.product.description,
                 style: TextStyle(
                   fontSize: 16,
                 ),
               ),
-              if (showDetails) ...[
+              if (widget.showDetails) ...[
                 SizedBox(height: 20),
                 Center(
-                  child:
-                Image.network(
-                  product.imageUrl,
+                    child: Image.network(
+                  widget.product.imageUrl,
                   width: 60,
                   // Esto utiliza el administrador de caché predeterminado
                 )),
@@ -81,7 +157,7 @@ class ProductDetailPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => EditProductPage(product),
+                          builder: (context) => EditProductPage(widget.product),
                         ),
                       );
                     },
@@ -111,7 +187,19 @@ class ProductDetailPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                RecommendedProductsSection(recommendedProducts),
+                FutureBuilder(
+                    future: Future.value(recommendedProducts),
+                    builder: (context, snapshot) {
+                      if (loadingRecommendedProducts) {
+                        return LoadingIndicator(); // Muestra un indicador de carga
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.hasData) {
+                        return RecommendedProductsSection(
+                            recommendedProducts);
+                      }
+                      return Container();
+                    }),
               ],
             ],
           ),

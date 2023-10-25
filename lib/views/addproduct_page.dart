@@ -54,6 +54,7 @@ class _AddProductPageState extends State<AddProductPage> {
           builder: (context) => ProductDetailPage(
             product: p,
             recommendedProducts: [],
+            ask:false
           ),
         ),
       );

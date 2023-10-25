@@ -7,31 +7,14 @@ import 'package:obl_ihc_pruebasconflutter/views/recoverypassword_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
   void _saveData(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("token", value);
   }
 
-  
-
-
 class LoginPage extends StatefulWidget {
   @override
   State<LoginPage> createState() => _LoginPageState();
-}
-
-
-Future<UserCredential> _signInWithFacebook() async {
-  // Trigger the sign-in flow
-  final LoginResult loginResult = await FacebookAuth.instance.login();
-
-  // Create a credential from the access token
-  final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
-
-  // Once signed in, return the UserCredential
-  return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -46,8 +29,6 @@ class _LoginPageState extends State<LoginPage> {
       passwordController = TextEditingController(text: "demo1234");
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -194,9 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                         minimumSize: MaterialStateProperty.all<Size>(Size(40, 40))
                     ),
                     onPressed: () async {
-
-                      _signInWithFacebook();
-                      /* final LoginResult result = await FacebookAuth.instance.login(permissions: ["email"]);
+                      final LoginResult result = await FacebookAuth.instance.login();
 
                       if (result.status == LoginStatus.success) {
                         final AccessToken accessToken = result.accessToken!;
@@ -210,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           );
                         }
-                      } */
+                      }
                     },
                     icon: Icon(
                       Icons.facebook,

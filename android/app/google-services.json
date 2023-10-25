@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "108363526731-0ct9d6f22ilp7edcqsrj1p9s9ildroam.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.obl_ihc_pruebasconflutter",
+            "certificate_hash": "2ac17b8bbc93fc07e97f53d81f40f23654b4cffd"
+          }
+        },
+        {
           "client_id": "108363526731-dj5ppvu19aandkgb4blpiug8mj69qn34.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

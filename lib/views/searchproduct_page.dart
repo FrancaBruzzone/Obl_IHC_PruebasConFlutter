@@ -9,30 +9,27 @@ import 'dart:convert';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 
 class SearchProductPage extends StatelessWidget {
-  
   Future<void> _scanBarcode(BuildContext context) async {
     try {
       String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           "#ff6666", "Cancelar", true, ScanMode.BARCODE);
       print('Código de barras escaneado: $barcodeScanRes');
 
-    
-
-      if(barcodeScanRes!="-1"){
-      showDialog(
-        context: context,
-        builder: (context) {
-          return Dialog(
-            child: Container(
-              width: 80, // Establece el ancho deseado
-              height: 80, // Establece la altura deseada
-              color: Colors.white.withOpacity(0.1),
-              child:
-                  LoadingIndicator(), // Muestra el widget de indicador de carga
-            ),
-          );
-        },
-      );
+      if (barcodeScanRes != "-1") {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              child: Container(
+                width: 80, // Establece el ancho deseado
+                height: 80, // Establece la altura deseada
+                color: Colors.white.withOpacity(0.1),
+                child:
+                    LoadingIndicator(), // Muestra el widget de indicador de carga
+              ),
+            );
+          },
+        );
       }
       // Muestra el indicador de carga mientras se obtiene la información del producto
 
@@ -42,16 +39,15 @@ class SearchProductPage extends StatelessWidget {
       Navigator.pop(context);
 
       if (scannedProduct != null) {
-        
-        List<Product> recommendedProducts =
-            getRecommendedProducts(scannedProduct);
+/*         List<Product> recommendedProducts =
+            await getRecommendedProducts(scannedProduct); */
 
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ProductDetailPage(
               product: scannedProduct,
-              recommendedProducts: recommendedProducts,
+              recommendedProducts: [],
             ),
           ),
         );
@@ -109,30 +105,7 @@ class SearchProductPage extends StatelessWidget {
     }
   }
 
-  List<Product> getRecommendedProducts(Product scannedProduct) {
-    List<Product> recommendedProducts = [
-      Product(
-        name: 'Producto Recomendado 1',
-        description: 'Descripción del Producto Recomendado 1',
-        imageUrl: 'URL de la imagen del Producto Recomendado 1',
-        environmentalInfo: 'Información Ambiental del Producto Recomendado 1',
-        category: 'Categoría del Producto Recomendado 1',
-        environmentalCategory:
-            'Categorización Ambiental del Producto Recomendado 1',
-      ),
-      Product(
-        name: 'Producto Recomendado 2',
-        description: 'Descripción del Producto Recomendado 2',
-        imageUrl: 'URL de la imagen del Producto Recomendado 2',
-        environmentalInfo: 'Información Ambiental del Producto Recomendado 2',
-        category: 'Categoría del Producto Recomendado 2',
-        environmentalCategory:
-            'Categorización Ambiental del Producto Recomendado 2',
-      )
-    ];
-
-    return recommendedProducts;
-  }
+  
 
   @override
   Widget build(BuildContext context) {

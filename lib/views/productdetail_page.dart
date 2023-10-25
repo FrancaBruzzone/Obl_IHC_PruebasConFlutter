@@ -10,16 +10,19 @@ class ProductDetailPage extends StatefulWidget {
   final Product product;
   late List<Product> recommendedProducts;
   final bool showDetails;
+  final bool ask;
+
 
   ProductDetailPage({
     required this.product,
     required this.recommendedProducts,
     this.showDetails = true,
+    required this.ask,
   });
 
   @override
   State<ProductDetailPage> createState() =>
-      _ProductDetailPageState(product, recommendedProducts, showDetails);
+      _ProductDetailPageState(product, recommendedProducts, showDetails, ask);
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
@@ -27,22 +30,24 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   late List<Product> recommendedProducts;
   final bool showDetails;
   bool loadingRecommendedProducts = true;
+  bool ask = false;
 
   _ProductDetailPageState(
-      this.product, this.recommendedProducts, this.showDetails);
+      this.product, this.recommendedProducts, this.showDetails, this.ask);
 
 
   @override
   void initState() {
     super.initState();
-    getRecommendedProducts(product);
+    getRecommendedProducts(product,ask);
 /*     this.recommendedProducts = [
       Product(category: "",description: "", imageUrl: "", environmentalCategory: "", environmentalInfo: "", name: "nombre1"),
       Product(category: "",description: "", imageUrl: "", environmentalCategory: "", environmentalInfo: "", name: "nombre2")
     ]; */
   }
 
-  Future<void> getRecommendedProducts(Product scannedProduct) async {
+  Future<void> getRecommendedProducts(Product scannedProduct, bool ask) async {
+    if (!ask) return;
     try {
       Map<String, String> headers = {
         'Authorization': 'ihc',

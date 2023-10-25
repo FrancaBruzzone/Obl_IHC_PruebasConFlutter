@@ -48,6 +48,7 @@ class SearchProductPage extends StatelessWidget {
             builder: (context) => ProductDetailPage(
               product: scannedProduct,
               recommendedProducts: [],
+              ask:true,
             ),
           ),
         );

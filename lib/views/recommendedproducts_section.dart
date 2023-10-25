@@ -40,6 +40,7 @@ class RecommendedProductsSection extends StatelessWidget {
                         product: recommendedProducts[index],
                         recommendedProducts: recommendedProducts,
                         showDetails: false,
+                        ask:false
                       ),
                 ),
               );

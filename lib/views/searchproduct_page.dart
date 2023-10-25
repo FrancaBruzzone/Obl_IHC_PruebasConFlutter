@@ -7,6 +7,7 @@ import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
+import 'dart:io';
 
 class SearchProductPage extends StatelessWidget {
   Future<void> _scanBarcode(BuildContext context) async {
@@ -31,11 +32,7 @@ class SearchProductPage extends StatelessWidget {
           },
         );
       }
-      // Muestra el indicador de carga mientras se obtiene la información del producto
-
       Product? scannedProduct = await getProductInfo(barcodeScanRes);
-
-      // Cierra el diálogo de carga
       Navigator.pop(context);
 
       if (scannedProduct != null) {
@@ -73,18 +70,6 @@ class SearchProductPage extends StatelessWidget {
     }
   }
 
-  Future<void> _takePicture(BuildContext context) async {
-    final picker = ImagePicker();
-    final XFile? picture = await picker.pickImage(source: ImageSource.camera);
-
-    if (picture != null) {
-      print('Foto sacada: ${picture.path}');
-      // Agregar la lógica con la foto que se sacó
-    } else {
-      print('El usuario canceló la toma de la foto o ocurrió un error.');
-    }
-  }
-
   Future<Product?> getProductInfo(String barcode) async {
     Map? data;
     http.Response response = await http
@@ -106,7 +91,81 @@ class SearchProductPage extends StatelessWidget {
     }
   }
 
-  
+  Future<void> _takePicture(BuildContext context) async {
+    final picker = ImagePicker();
+    final XFile? picture = await picker.pickImage(source: ImageSource.camera);
+
+    if (picture != null) {
+      print('Foto sacada: ${picture.path}');
+      await detectObjectsWithCloudVision(picture.path);
+    } else {
+      print('El usuario canceló la toma de la foto o ocurrió un error.');
+    }
+  }
+
+  Future<void> detectObjectsWithCloudVision(String imagePath) async {
+    final apiUrl = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyC8lZz1_tMeY297wjg3WfcnAwykoAjnCig';
+    final imageFile = File(imagePath);
+
+    if (!imageFile.existsSync()) {
+      print('La imagen no se encontró en la ubicación especificada.');
+      return;
+    }
+
+    final request = {
+      'requests': [
+        {
+          'image': {
+            'content': base64Encode(imageFile.readAsBytesSync()),
+          },
+          'features': [
+            {
+              'type': 'OBJECT_LOCALIZATION',
+            },
+          ],
+          'imageContext': {
+            'languageHints': ['es'],
+          },
+        },
+      ],
+    };
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: json.encode(request),
+    );
+
+    if (response.statusCode == 200) {
+      final responseBody = json.decode(response.body);
+
+      final objects = responseBody['responses'][0]['localizedObjectAnnotations'];
+      bool objectWasFound = false;
+
+      if (objects != null) {
+        for (var object in objects) {
+          final score = object['score'];
+
+          if (score >= 0.85) {
+            final description = object['name'];
+            objectWasFound = true;
+            print('Objeto: $description, Confianza: $score');
+          }
+        }
+
+        if (!objectWasFound) {
+          print('No se encontró un objeto con una confianza mayor a 85%');
+        }
+
+      } else {
+        print('No se encontró ninguna respuesta');
+      }
+    } else {
+      print('Error al enviar la imagen a Google Cloud Vision. Código de respuesta: ${response.statusCode}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

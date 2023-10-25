@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/User.dart';
 import 'package:obl_ihc_pruebasconflutter/views/editprofile_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+
+  void _saveData(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("token", value);
+  }
 class ProfilePage extends StatelessWidget {
   final user = User(
     'Franca',
@@ -47,6 +53,7 @@ class ProfilePage extends StatelessWidget {
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
               ),
               onPressed: () {
+                _saveData("");
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => LoginPage(),

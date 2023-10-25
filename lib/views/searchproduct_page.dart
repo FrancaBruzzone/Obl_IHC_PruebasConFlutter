@@ -45,7 +45,7 @@ class SearchProductPage extends StatelessWidget {
             builder: (context) => ProductDetailPage(
               product: scannedProduct,
               recommendedProducts: [],
-              ask:true,
+              ask: true,
             ),
           ),
         );
@@ -97,19 +97,53 @@ class SearchProductPage extends StatelessWidget {
 
     if (picture != null) {
       print('Foto sacada: ${picture.path}');
-      await detectObjectsWithCloudVision(picture.path);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Container(
+              width: 80, // Establece el ancho deseado
+              height: 80, // Establece la altura deseada
+              color: Colors.white.withOpacity(0.1),
+              child:
+                  LoadingIndicator(), // Muestra el widget de indicador de carga
+            ),
+          );
+        },
+      );
+
+      Product? scannedProduct =
+          await detectObjectsWithCloudVision(picture.path);
+      Navigator.pop(context);
+
+      if (scannedProduct != null) {
+/*         List<Product> recommendedProducts =
+            await getRecommendedProducts(scannedProduct); */
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetailPage(
+              product: scannedProduct,
+              recommendedProducts: [],
+              ask: true,
+            ),
+          ),
+        );
+      }
     } else {
       print('El usuario canceló la toma de la foto o ocurrió un error.');
     }
   }
 
-  Future<void> detectObjectsWithCloudVision(String imagePath) async {
-    final apiUrl = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyC8lZz1_tMeY297wjg3WfcnAwykoAjnCig';
+  Future<Product?> detectObjectsWithCloudVision(String imagePath) async {
+    final apiUrl =
+        'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyC8lZz1_tMeY297wjg3WfcnAwykoAjnCig';
     final imageFile = File(imagePath);
 
     if (!imageFile.existsSync()) {
       print('La imagen no se encontró en la ubicación especificada.');
-      return;
+      return null;
     }
 
     final request = {
@@ -141,7 +175,8 @@ class SearchProductPage extends StatelessWidget {
     if (response.statusCode == 200) {
       final responseBody = json.decode(response.body);
 
-      final objects = responseBody['responses'][0]['localizedObjectAnnotations'];
+      final objects =
+          responseBody['responses'][0]['localizedObjectAnnotations'];
       bool objectWasFound = false;
 
       if (objects != null) {
@@ -151,20 +186,35 @@ class SearchProductPage extends StatelessWidget {
           if (score >= 0.85) {
             final description = object['name'];
             objectWasFound = true;
+
+            var x = Product(
+              name: object['name'],
+              description: object['name'],
+              imageUrl: "https://ihc.gil.com.uy/images/no_photo.jpg",
+              environmentalInfo: object['name'],
+              category: object['name'],
+              environmentalCategory: object['name'],
+            );
+
             print('Objeto: $description, Confianza: $score');
+            return x;
           }
         }
 
         if (!objectWasFound) {
           print('No se encontró un objeto con una confianza mayor a 85%');
+          return null;
         }
-
       } else {
         print('No se encontró ninguna respuesta');
+        return null;
       }
     } else {
-      print('Error al enviar la imagen a Google Cloud Vision. Código de respuesta: ${response.statusCode}');
+      print(
+          'Error al enviar la imagen a Google Cloud Vision. Código de respuesta: ${response.statusCode}');
+      return null;
     }
+    return null;
   }
 
   @override

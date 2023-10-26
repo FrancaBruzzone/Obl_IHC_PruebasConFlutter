@@ -19,12 +19,13 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late TextEditingController emailController = TextEditingController();
   late TextEditingController passwordController = TextEditingController();
-  bool isError = false;
+  String? errorMessage;
 
   void setDemo() {
     setState(() {
-      emailController = TextEditingController(text: "demo@greentrace.uy");
-      passwordController = TextEditingController(text: "demo1234");
+      emailController.text = "demo@greentrace.uy";
+      passwordController.text = "demo1234";
+      errorMessage = null;
     });
   }
 
@@ -54,6 +55,14 @@ class _LoginPageState extends State<LoginPage> {
                 labelText: 'Contraseña',
               ),
             ),
+            if (errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  errorMessage!,
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
             SizedBox(height: 16.0),
             ElevatedButton.icon(
               style: ButtonStyle(
@@ -76,7 +85,9 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   }
                 } catch (e) {
-                  print('Error de autenticación: $e');
+                  setState(() {
+                    errorMessage = 'Credenciales incorrectas';
+                  });
                 }
               },
               icon: Icon(
@@ -121,14 +132,14 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   ElevatedButton.icon(
                     style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
-                        minimumSize: MaterialStateProperty.all<Size>(Size(40, 40))
+                      ),
+                      minimumSize: MaterialStateProperty.all<Size>(Size(40, 40)),
                     ),
                     onPressed: () async {
                       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -142,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       if (userCredential.user != null) {
                         final User user = userCredential.user!;
-                         _saveData("yes");
+                        _saveData("yes");
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => HomePage(user),
@@ -164,7 +175,6 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 16.0),
             GestureDetector(
               onTap: () {
-                
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => RegisterPage(),

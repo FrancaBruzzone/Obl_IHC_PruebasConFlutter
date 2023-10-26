@@ -41,7 +41,16 @@ class _ProfilePageState extends State<ProfilePage> {
             (route) => false,
       );
     } catch (e) {
-      print('Error al cerrar sesión: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Error al cerrar sesión',
+            style: TextStyle(color: Colors.white),
+          ),
+          duration: Duration(seconds: 5),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 

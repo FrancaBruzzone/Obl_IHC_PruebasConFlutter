@@ -5,8 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final TextEditingController firstNameController = TextEditingController();
-    final TextEditingController lastNameController = TextEditingController();
+    final TextEditingController nameController = TextEditingController();
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
 
@@ -21,16 +20,9 @@ class RegisterPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextField(
-              controller: firstNameController,
+              controller: nameController,
               decoration: InputDecoration(
-                labelText: 'Nombre',
-              ),
-            ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: lastNameController,
-              decoration: InputDecoration(
-                labelText: 'Apellido',
+                labelText: 'Nombre y apellido',
               ),
             ),
             SizedBox(height: 16.0),
@@ -61,7 +53,7 @@ class RegisterPage extends StatelessWidget {
                   );
 
                   User? user = userCredential.user;
-                  await user?.updateProfile(displayName: '${firstNameController.text} ${lastNameController.text}');
+                  await user?.updateProfile(displayName: '${nameController.text}');
 
                   Navigator.push(
                     context,
@@ -70,7 +62,16 @@ class RegisterPage extends StatelessWidget {
                     ),
                   );
                 } catch (e) {
-                  print('Error al registrar usuario: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'No fue posible registrar el usuario',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      duration: Duration(seconds: 5),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
                 }
               },
               icon: Icon(

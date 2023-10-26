@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:obl_ihc_pruebasconflutter/views/home_page.dart';
-import 'package:obl_ihc_pruebasconflutter/views/recoverypassword_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/forgotpassword_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,13 +19,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late TextEditingController emailController = TextEditingController();
   late TextEditingController passwordController = TextEditingController();
-  String? errorMessage;
 
   void setDemo() {
     setState(() {
       emailController.text = "demo@greentrace.uy";
       passwordController.text = "demo1234";
-      errorMessage = null;
     });
   }
 
@@ -55,14 +53,6 @@ class _LoginPageState extends State<LoginPage> {
                 labelText: 'Contraseña',
               ),
             ),
-            if (errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  errorMessage!,
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
             SizedBox(height: 16.0),
             ElevatedButton.icon(
               style: ButtonStyle(
@@ -85,9 +75,16 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   }
                 } catch (e) {
-                  setState(() {
-                    errorMessage = 'Credenciales incorrectas';
-                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Credenciales incorrectas',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      duration: Duration(seconds: 5),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
                 }
               },
               icon: Icon(
@@ -103,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => RecoveryPasswordPage(),
+                    builder: (context) => ForgotPasswordPage(),
                   ),
                 );
               },

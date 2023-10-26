@@ -14,6 +14,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   User? _user;
   late TextEditingController nameController;
   late TextEditingController emailController;
+  late TextEditingController currentPasswordController;
+  late TextEditingController newPasswordController;
 
   _EditProfilePageState(this._user);
 
@@ -22,6 +24,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.initState();
     nameController = TextEditingController(text: _user?.displayName ?? '');
     emailController = TextEditingController(text: _user?.email ?? '');
+    currentPasswordController = TextEditingController();
+    newPasswordController = TextEditingController();
   }
 
   @override
@@ -33,22 +37,42 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _saveProfileChanges() async {
     try {
-      await _user?.updateDisplayName(nameController.text);
-      await _user?.reload();
-      _user = FirebaseAuth.instance.currentUser;
+      final String newDisplayName = nameController.text;
+      final String newEmail = emailController.text;
+      final String newPassword = newPasswordController.text;
 
-      await _user?.updateEmail(emailController.text);
-      await _user?.reload();
-      _user = FirebaseAuth.instance.currentUser;
+      if (currentPasswordController.text.isNotEmpty && newPassword.isNotEmpty) {
+        final AuthCredential credential = EmailAuthProvider.credential(
+          email: _user?.email ?? '',
+          password: currentPasswordController.text,
+        );
 
-      nameController.text = _user?.displayName ?? '';
-      emailController.text = _user?.email ?? '';
+        await _user?.reauthenticateWithCredential(credential);
+        await _user?.updatePassword(newPassword);
+      }
 
-      setState(() {});
+      if (newDisplayName != _user?.displayName || newEmail != _user?.email) {
+        await _user?.updateDisplayName(newDisplayName);
+        await _user?.updateEmail(newEmail);
+        await _user?.reload();
+        _user = FirebaseAuth.instance.currentUser;
+
+        nameController.text = _user?.displayName ?? '';
+        emailController.text = _user?.email ?? '';
+      }
 
       Navigator.pop(context, _user);
     } catch (e) {
-      print('Error al actualizar el perfil: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Error al actualizar el perfil',
+            style: TextStyle(color: Colors.white),
+          ),
+          duration: Duration(seconds: 5),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -76,6 +100,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
               child: TextFormField(
                 controller: emailController,
                 decoration: InputDecoration(labelText: 'Email'),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: TextFormField(
+                controller: currentPasswordController,
+                decoration: InputDecoration(labelText: 'Contraseña actual'),
+                obscureText: true,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: TextFormField(
+                controller: newPasswordController,
+                decoration: InputDecoration(labelText: 'Nueva contraseña'),
+                obscureText: true,
               ),
             ),
             SizedBox(height: 20),

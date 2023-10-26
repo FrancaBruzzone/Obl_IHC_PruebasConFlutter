@@ -34,7 +34,7 @@ class _CameraProductDetailPageState extends State<CameraProductDetailPage> {
   @override
   void initState() {
     super.initState();
-    //getRecommendedProducts(product,ask);
+    getRecommendedProducts(product,ask);
   }
 
   Future<void> getRecommendedProducts(Product scannedProduct, bool ask) async {

@@ -163,8 +163,6 @@ class _AddProductPageState extends State<AddProductPage> {
        setState(() {
         pic = picture;
       });
-    } else {
-      print('El usuario canceló la toma de la foto o ocurrió un error.');
     }
   }
 

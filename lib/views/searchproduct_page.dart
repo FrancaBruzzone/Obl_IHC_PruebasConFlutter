@@ -16,7 +16,6 @@ class SearchProductPage extends StatelessWidget {
       String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           "#ff6666", "Cancelar", true, ScanMode.BARCODE
       );
-      print('Código de barras escaneado: $barcodeScanRes');
 
       if (barcodeScanRes != "-1") {
         showDialog(
@@ -59,10 +58,17 @@ class SearchProductPage extends StatelessWidget {
         );
       }
     } catch (e) {
-      if (e is FormatException) {
-        print('Escaneo cancelado');
-      } else {
-        print('Error al escanear código de barras: $e');
+      if (e is! FormatException) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Hubo un error al escanear el código de barras, reitente más tarde.',
+              style: TextStyle(color: Colors.white),
+            ),
+            duration: Duration(seconds: 5),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -71,7 +77,6 @@ class SearchProductPage extends StatelessWidget {
     Map? data;
     http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/products/$barcode'));
     data = json.decode(response.body);
-    print("DATA OBTENIDA: ${data}");
 
     if (data != null && data["error"] == null) {
       return Product(
@@ -92,7 +97,6 @@ class SearchProductPage extends StatelessWidget {
     final XFile? picture = await picker.pickImage(source: ImageSource.camera);
 
     if (picture != null) {
-      print('Foto sacada: ${picture.path}');
       showDialog(
         context: context,
         builder: (context) {
@@ -107,7 +111,7 @@ class SearchProductPage extends StatelessWidget {
         },
       );
 
-      Product? scannedProduct = await detectObjectsWithCloudVision(picture.path);
+      Product? scannedProduct = await detectObjectsWithCloudVision(context, picture.path);
       Navigator.pop(context);
 
       if (scannedProduct != null) {
@@ -122,17 +126,24 @@ class SearchProductPage extends StatelessWidget {
           ),
         );
       }
-    } else {
-      print('El usuario canceló la toma de la foto o ocurrió un error.');
     }
   }
 
-  Future<Product?> detectObjectsWithCloudVision(String imagePath) async {
+  Future<Product?> detectObjectsWithCloudVision(BuildContext context, String imagePath) async {
     final apiUrl = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyC8lZz1_tMeY297wjg3WfcnAwykoAjnCig';
     final imageFile = File(imagePath);
 
     if (!imageFile.existsSync()) {
-      print('La imagen no se encontró en la ubicación especificada.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Hubo una falla en la imagen, vuelve a intentarlo.',
+            style: TextStyle(color: Colors.white),
+          ),
+          duration: Duration(seconds: 5),
+          backgroundColor: Colors.red,
+        ),
+      );
       return null;
     }
 
@@ -158,7 +169,7 @@ class SearchProductPage extends StatelessWidget {
         objects.sort((a, b) {
           final double scoreA = a['score'];
           final double scoreB = b['score'];
-          return scoreB.compareTo(scoreA); // Orden descendente
+          return scoreB.compareTo(scoreA);
         });
 
         if (objects.isNotEmpty) {
@@ -176,23 +187,57 @@ class SearchProductPage extends StatelessWidget {
                 environmentalCategory: '',
                 imageFile: imageFile
             );
-
-            print('Objeto: $description, Confianza: $bestScore');
             return x;
           } else {
-            print('El objeto con mayor confianza no cumple con el umbral del 75%.');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'No se encontró ningún producto que cumpla con el umbral de confianza del 75%.',
+                  style: TextStyle(color: Colors.white),
+                ),
+                duration: Duration(seconds: 5),
+                backgroundColor: Colors.red,
+              ),
+            );
             return null;
           }
         } else {
-          print('No se encontraron objetos en la respuesta.');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'No se encontró ningún producto relacionado.',
+                style: TextStyle(color: Colors.white),
+              ),
+              duration: Duration(seconds: 5),
+              backgroundColor: Colors.red,
+            ),
+          );
           return null;
         }
       } else {
-        print('No se encontró ninguna respuesta válida.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'No se encontró ningún producto relacionado.',
+              style: TextStyle(color: Colors.white),
+            ),
+            duration: Duration(seconds: 5),
+            backgroundColor: Colors.red,
+          ),
+        );
         return null;
       }
     } else {
-      print( 'Error al enviar la imagen a Google Cloud Vision. Código de respuesta: ${response.statusCode}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Error al enviar la imagen a analizar, reintente más tarde.',
+            style: TextStyle(color: Colors.white),
+          ),
+          duration: Duration(seconds: 5),
+          backgroundColor: Colors.red,
+        ),
+      );
       return null;
     }
     return null;

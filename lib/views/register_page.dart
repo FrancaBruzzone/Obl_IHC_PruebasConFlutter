@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class RegisterPage extends StatelessWidget {
   @override
@@ -79,8 +77,7 @@ class RegisterPage extends StatelessWidget {
                 Icons.person_add,
                 color: Colors.white,
               ),
-              label: Text(
-                'Registrarse',
+              label: Text('Registrarse',
                 style: TextStyle(color: Colors.white),
               ),
             ),

@@ -1,5 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:obl_ihc_pruebasconflutter/entities/User.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:obl_ihc_pruebasconflutter/views/editprofile_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,13 +10,47 @@ void _saveData(String value) async {
   prefs.setString("token", value);
 }
 
-class ProfilePage extends StatelessWidget {
-  final user = User(
-    'Franca',
-    'Bruzzone',
-    'francabruzzone2@gmail.com',
-    'contrasena123'
-  );
+class ProfilePage extends StatefulWidget {
+  final User? user;
+
+  ProfilePage(this.user);
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState(user);
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  User? _user;
+
+  _ProfilePageState(this._user);
+
+  Future<void> _revokeGoogleSignIn() async {
+    final googleSignIn = GoogleSignIn();
+    await googleSignIn.signOut();
+  }
+
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      await _revokeGoogleSignIn();
+      await FirebaseAuth.instance.signOut();
+      _saveData("");
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ),
+            (route) => false,
+      );
+    } catch (e) {
+      print('Error al cerrar sesión: $e');
+    }
+  }
+
+  Future<void> _refreshUserData() async {
+    final user = await FirebaseAuth.instance.currentUser;
+    setState(() {
+      _user = user;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +60,8 @@ class ProfilePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            _buildProfileInfo('Nombre:', user.nombre, Icons.person),
-            _buildProfileInfo('Apellido:', user.apellido, Icons.person),
-            _buildProfileInfo('Email:', user.email, Icons.email),
-            _buildProfileInfo('Contraseña:', user.contrasena, Icons.lock),
+            _buildProfileInfo('Nombre:', _user?.displayName ?? '', Icons.person),
+            _buildProfileInfo('Email:', _user?.email ?? '', Icons.email),
             SizedBox(height: 20),
             ElevatedButton.icon(
               style: ButtonStyle(
@@ -37,9 +70,15 @@ class ProfilePage extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => EditProfilePage(user),
+                    builder: (context) => EditProfilePage(_user),
                   ),
-                );
+                ).then((resultUser) {
+                  if (resultUser != null) {
+                    setState(() {
+                      _user = resultUser;
+                    });
+                  }
+                });
               },
               icon: Icon(
                 Icons.edit,
@@ -53,13 +92,7 @@ class ProfilePage extends StatelessWidget {
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
               ),
               onPressed: () {
-                _saveData("");
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) => LoginPage(),
-                  ),
-                      (route) => false,
-                );
+                _signOut(context);
               },
               icon: Icon(
                 Icons.exit_to_app,

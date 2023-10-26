@@ -6,13 +6,13 @@ import 'package:obl_ihc_pruebasconflutter/views/editproduct_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'package:obl_ihc_pruebasconflutter/views/recommendedproducts_section.dart';
 
-class ProductDetailPage extends StatefulWidget {
+class BarcodeProductDetailPage extends StatefulWidget {
   final Product product;
   late List<Product> recommendedProducts;
   final bool showDetails;
   final bool ask;
 
-  ProductDetailPage({
+  BarcodeProductDetailPage({
     required this.product,
     required this.recommendedProducts,
     this.showDetails = true,
@@ -20,33 +20,29 @@ class ProductDetailPage extends StatefulWidget {
   });
 
   @override
-  State<ProductDetailPage> createState() => _ProductDetailPageState(product, recommendedProducts, showDetails, ask);
+  State<BarcodeProductDetailPage> createState() => _BarcodeProductDetailPageState(product, recommendedProducts, showDetails, ask);
 }
 
-class _ProductDetailPageState extends State<ProductDetailPage> {
+class _BarcodeProductDetailPageState extends State<BarcodeProductDetailPage> {
   final Product product;
   late List<Product> recommendedProducts;
   final bool showDetails;
   bool loadingRecommendedProducts = true;
   bool ask = false;
 
-  _ProductDetailPageState(this.product, this.recommendedProducts, this.showDetails, this.ask);
+  _BarcodeProductDetailPageState(this.product, this.recommendedProducts, this.showDetails, this.ask);
 
   @override
   void initState() {
     super.initState();
-    getRecommendedProducts(product,ask);
+    //getRecommendedProducts(product,ask);
   }
 
   Future<void> getRecommendedProducts(Product scannedProduct, bool ask) async {
     if (!ask) return;
     try {
-      Map<String, String> headers = {
-        'Authorization': 'ihc',
-      };
-
-      http.Response response = await http.get(
-          Uri.parse('https://ihc.gil.com.uy/api/querys?filter=${scannedProduct.description}'),
+      Map<String, String> headers = { 'Authorization': 'ihc', };
+      http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/querys?filter=${scannedProduct.description}'),
           headers: headers
       );
 
@@ -107,29 +103,27 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ),
               ),
               SizedBox(height: 8),
-              Text(
-                'Información Ambiental:',
+              Text('Información Ambiental:',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                widget.product.environmentalInfo,
+                widget.product.environmentalInfo!,
                 style: TextStyle(
                   fontSize: 16,
                 ),
               ),
               SizedBox(height: 16),
-              Text(
-                'Descripción:',
+              Text('Descripción:',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                widget.product.description,
+                widget.product.description!,
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -138,7 +132,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 SizedBox(height: 20),
                 Center(
                   child: Image.network(
-                    widget.product.imageUrl,
+                    widget.product.imageUrl!,
                     width: 60,
                   )
                 ),
@@ -159,8 +153,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       Icons.edit,
                       color: Colors.white,
                     ),
-                    label: Text(
-                      'Editar',
+                    label: Text('Editar',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -174,8 +167,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   endIndent: 20,
                 ),
                 SizedBox(height: 20),
-                Text(
-                  'Productos recomendados:',
+                Text('Productos recomendados:',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -189,9 +181,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else if (snapshot.hasData) {
-                      return RecommendedProductsSection(
-                          recommendedProducts
-                      );
+                      return RecommendedProductsSection(recommendedProducts, true);
                     }
                     return Container();
                   }

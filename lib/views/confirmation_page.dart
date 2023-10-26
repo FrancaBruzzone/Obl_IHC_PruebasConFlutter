@@ -20,8 +20,7 @@ class ConfirmationPage extends StatelessWidget {
               size: 100.0,
             ),
             SizedBox(height: 16.0),
-            Text(
-              'Se ha enviado un enlace de recuperación a su correo electrónico.',
+            Text('Se ha enviado un enlace de recuperación a su correo electrónico.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16.0,
@@ -39,8 +38,7 @@ class ConfirmationPage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text(
-                'Volver a iniciar sesión',
+              child: Text('Volver a iniciar sesión',
                 style: TextStyle(color: Colors.white),
               ),
             ),

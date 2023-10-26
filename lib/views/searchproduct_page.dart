@@ -3,8 +3,9 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
 import 'package:obl_ihc_pruebasconflutter/views/addproduct_page.dart';
-import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/barcodeproductdetail_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:obl_ihc_pruebasconflutter/views/cameraproductdetail_page.dart';
 import 'dart:convert';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'dart:io';
@@ -40,7 +41,7 @@ class SearchProductPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProductDetailPage(
+            builder: (context) => BarcodeProductDetailPage(
               product: scannedProduct,
               recommendedProducts: [],
               ask: true,
@@ -113,7 +114,7 @@ class SearchProductPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProductDetailPage(
+            builder: (context) => CameraProductDetailPage(
               product: scannedProduct,
               recommendedProducts: [],
               ask: true
@@ -136,64 +137,58 @@ class SearchProductPage extends StatelessWidget {
     }
 
     final request = {
-      'requests': [
-        {
-          'image': {
-            'content': base64Encode(imageFile.readAsBytesSync()),
-          },
-          'features': [
-            {
-              'type': 'OBJECT_LOCALIZATION',
-            },
-          ],
-          'imageContext': {
-            'languageHints': ['es'],
-          },
-        },
-      ],
+      'requests': [{
+        'image': { 'content': base64Encode(imageFile.readAsBytesSync()) },
+        'features': [{ 'type': 'OBJECT_LOCALIZATION' }],
+        'imageContext': { 'languageHints': ['es'] },
+      }],
     };
 
     final response = await http.post(
       Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: json.encode(request),
     );
 
     if (response.statusCode == 200) {
       final responseBody = json.decode(response.body);
       final objects = responseBody['responses'][0]['localizedObjectAnnotations'];
-      bool objectWasFound = false;
 
-      if (objects != null) {
-        for (var object in objects) {
-          final score = object['score'];
+      if (objects != null && objects is List) {
+        objects.sort((a, b) {
+          final double scoreA = a['score'];
+          final double scoreB = b['score'];
+          return scoreB.compareTo(scoreA); // Orden descendente
+        });
 
-          if (score >= 0.85) {
-            final description = object['name'];
-            objectWasFound = true;
+        if (objects.isNotEmpty) {
+          final bestObject = objects[0];
+          final double bestScore = bestObject['score'];
+          final String description = bestObject['name'];
 
+          if (bestScore >= 0.75) {
             var x = Product(
-              name: object['name'],
-              description: object['name'],
-              imageUrl: "https://ihc.gil.com.uy/images/no_photo.jpg",
-              environmentalInfo: object['name'],
-              category: object['name'],
-              environmentalCategory: object['name'],
+                name: description,
+                description: '',
+                imageUrl: '',
+                environmentalInfo: '',
+                category: '',
+                environmentalCategory: '',
+                imageFile: imageFile
             );
 
-            print('Objeto: $description, Confianza: $score');
+            print('Objeto: $description, Confianza: $bestScore');
             return x;
+          } else {
+            print('El objeto con mayor confianza no cumple con el umbral del 75%.');
+            return null;
           }
-        }
-
-        if (!objectWasFound) {
-          print('No se encontró un objeto con una confianza mayor a 85%');
+        } else {
+          print('No se encontraron objetos en la respuesta.');
           return null;
         }
       } else {
-        print('No se encontró ninguna respuesta');
+        print('No se encontró ninguna respuesta válida.');
         return null;
       }
     } else {
@@ -234,8 +229,7 @@ class SearchProductPage extends StatelessWidget {
                         color: Colors.white,
                       ),
                       SizedBox(height: 8),
-                      Text(
-                        'Escanear código de barras',
+                      Text('Escanear código de barras',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -271,8 +265,7 @@ class SearchProductPage extends StatelessWidget {
                         color: Colors.white,
                       ),
                       SizedBox(height: 8),
-                      Text(
-                        'Sacar foto a producto',
+                      Text('Sacar foto a producto',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

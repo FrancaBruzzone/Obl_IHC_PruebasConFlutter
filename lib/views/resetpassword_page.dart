@@ -20,8 +20,7 @@ class ResetPasswordPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Ingrese su nueva contraseña',
+            Text('Ingrese su nueva contraseña',
               style: TextStyle(fontSize: 16.0),
             ),
             SizedBox(height: 16.0),
@@ -49,8 +48,7 @@ class ResetPasswordPage extends StatelessWidget {
                 Icons.check,
                 color: Colors.white,
               ),
-              label: Text(
-                'Cambiar',
+              label: Text('Cambiar',
                 style: TextStyle(color: Colors.white),
               ),
             ),

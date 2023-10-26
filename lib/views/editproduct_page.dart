@@ -68,8 +68,7 @@ class _EditProductPageState extends State<EditProductPage> {
                   backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                 ),
                 onPressed: _saveChanges,
-                child: Text(
-                  'Guardar',
+                child: Text('Guardar',
                   style: TextStyle(color: Colors.white),
                 ),
               ),

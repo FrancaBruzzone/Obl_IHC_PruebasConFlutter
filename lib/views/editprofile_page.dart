@@ -1,10 +1,56 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:obl_ihc_pruebasconflutter/entities/User.dart';
 
-class EditProfilePage extends StatelessWidget {
-  final User user;
+class EditProfilePage extends StatefulWidget {
+  final User? user;
 
   EditProfilePage(this.user);
+
+  @override
+  _EditProfilePageState createState() => _EditProfilePageState(user);
+}
+
+class _EditProfilePageState extends State<EditProfilePage> {
+  User? _user;
+  late TextEditingController nameController;
+  late TextEditingController emailController;
+
+  _EditProfilePageState(this._user);
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(text: _user?.displayName ?? '');
+    emailController = TextEditingController(text: _user?.email ?? '');
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveProfileChanges() async {
+    try {
+      await _user?.updateDisplayName(nameController.text);
+      await _user?.reload();
+      _user = FirebaseAuth.instance.currentUser;
+
+      await _user?.updateEmail(emailController.text);
+      await _user?.reload();
+      _user = FirebaseAuth.instance.currentUser;
+
+      nameController.text = _user?.displayName ?? '';
+      emailController.text = _user?.email ?? '';
+
+      setState(() {});
+
+      Navigator.pop(context, _user);
+    } catch (e) {
+      print('Error al actualizar el perfil: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,30 +67,15 @@ class EditProfilePage extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(16.0),
               child: TextFormField(
-                initialValue: user.nombre,
+                controller: nameController,
                 decoration: InputDecoration(labelText: 'Nombre'),
               ),
             ),
             Padding(
               padding: EdgeInsets.all(16.0),
               child: TextFormField(
-                initialValue: user.apellido,
-                decoration: InputDecoration(labelText: 'Apellido'),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: TextFormField(
-                initialValue: user.email,
+                controller: emailController,
                 decoration: InputDecoration(labelText: 'Email'),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: TextFormField(
-                obscureText: true,
-                initialValue: user.contrasena,
-                decoration: InputDecoration(labelText: 'Contraseña'),
               ),
             ),
             SizedBox(height: 20),
@@ -52,15 +83,12 @@ class EditProfilePage extends StatelessWidget {
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: _saveProfileChanges,
               icon: Icon(
                 Icons.save,
                 color: Colors.white,
               ),
-              label: Text('Guardar', style: TextStyle(color: Colors.white)
-              ),
+              label: Text('Guardar', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

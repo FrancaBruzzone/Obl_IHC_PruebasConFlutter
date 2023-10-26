@@ -4,18 +4,21 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
-import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/barcodeproductdetail_page.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class AddProductPage extends StatefulWidget {
   late final String productCode;
-  AddProductPage({required this.productCode});
+
+  AddProductPage({ required this.productCode });
+
   @override
   _AddProductPageState createState() => _AddProductPageState(productCode);
 }
 
 class _AddProductPageState extends State<AddProductPage> {
   final String productCode;
+
   _AddProductPageState(this.productCode);
 
   late TextEditingController nameController;
@@ -50,7 +53,7 @@ class _AddProductPageState extends State<AddProductPage> {
 
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => ProductDetailPage(
+          builder: (context) => BarcodeProductDetailPage(
             product: p,
             recommendedProducts: [],
             ask:false
@@ -62,7 +65,6 @@ class _AddProductPageState extends State<AddProductPage> {
 
   Future<void> saveProductInCloud(Product p) async {
     String _responseText = "";
-
     final String apiUrl = 'https://ihc.gil.com.uy/api/products';
 
     final String requestBody = jsonEncode({
@@ -116,8 +118,7 @@ class _AddProductPageState extends State<AddProductPage> {
 
       if (response.statusCode == 200) {
         setState(() async {
-          _responseText =
-              'Respuesta del servidor: ${await response.stream.bytesToString()}';
+          _responseText = 'Respuesta del servidor: ${await response.stream.bytesToString()}';
         });
       } else {
         setState(() {
@@ -182,8 +183,7 @@ class _AddProductPageState extends State<AddProductPage> {
             if (productNotFound)
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'El producto buscado no se encontró. Puede agregar un nuevo producto: ${productCode}',
+                child: Text('El producto buscado no se encontró. Puede agregar un nuevo producto: ${productCode}',
                   style: TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
@@ -225,8 +225,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       color: Colors.white,
                     ),
                     SizedBox(height: 8),
-                    Text(
-                      'Sacar foto a producto',
+                    Text('Sacar foto a producto',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -244,8 +243,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       MaterialStateProperty.all<Color>(Colors.green),
                 ),
                 onPressed: _saveProduct,
-                child: Text(
-                  'Agregar',
+                child: Text('Agregar',
                   style: TextStyle(color: Colors.white),
                 ),
               ),

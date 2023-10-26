@@ -1,19 +1,23 @@
+import 'dart:io';
+
 class Product {
-  final String? code;
   final String name;
-  final String description;
-  final String imageUrl;
-  final String environmentalInfo;
-  final String category;
-  final String environmentalCategory;
+  final String? code;
+  final String? description;
+  final String? imageUrl;
+  final String? environmentalInfo;
+  final String? category;
+  final String? environmentalCategory;
+  final File? imageFile;
 
   Product({
-    this.code,
     required this.name,
-    required this.description,
-    required this.imageUrl,
-    required this.environmentalInfo,
-    required this.category,
-    required this.environmentalCategory
+    this.code,
+    this.description,
+    this.imageUrl,
+    this.environmentalInfo,
+    this.category,
+    this.environmentalCategory,
+    this.imageFile
   });
 }

@@ -13,7 +13,8 @@ class SearchProductPage extends StatelessWidget {
   Future<void> _scanBarcode(BuildContext context) async {
     try {
       String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          "#ff6666", "Cancelar", true, ScanMode.BARCODE);
+          "#ff6666", "Cancelar", true, ScanMode.BARCODE
+      );
       print('Código de barras escaneado: $barcodeScanRes');
 
       if (barcodeScanRes != "-1") {
@@ -22,23 +23,20 @@ class SearchProductPage extends StatelessWidget {
           builder: (context) {
             return Dialog(
               child: Container(
-                width: 80, // Establece el ancho deseado
-                height: 80, // Establece la altura deseada
+                width: 80,
+                height: 80,
                 color: Colors.white.withOpacity(0.1),
-                child:
-                    LoadingIndicator(), // Muestra el widget de indicador de carga
+                child: LoadingIndicator(),
               ),
             );
           },
         );
       }
+
       Product? scannedProduct = await getProductInfo(barcodeScanRes);
       Navigator.pop(context);
 
       if (scannedProduct != null) {
-/*         List<Product> recommendedProducts =
-            await getRecommendedProducts(scannedProduct); */
-
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -61,10 +59,8 @@ class SearchProductPage extends StatelessWidget {
       }
     } catch (e) {
       if (e is FormatException) {
-        // El usuario canceló el escaneo
         print('Escaneo cancelado');
       } else {
-        // Ocurrió un error durante el escaneo
         print('Error al escanear código de barras: $e');
       }
     }
@@ -72,8 +68,7 @@ class SearchProductPage extends StatelessWidget {
 
   Future<Product?> getProductInfo(String barcode) async {
     Map? data;
-    http.Response response = await http
-        .get(Uri.parse('https://ihc.gil.com.uy/api/products/$barcode'));
+    http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/products/$barcode'));
     data = json.decode(response.body);
     print("DATA OBTENIDA: ${data}");
 
@@ -102,31 +97,26 @@ class SearchProductPage extends StatelessWidget {
         builder: (context) {
           return Dialog(
             child: Container(
-              width: 80, // Establece el ancho deseado
-              height: 80, // Establece la altura deseada
+              width: 80,
+              height: 80,
               color: Colors.white.withOpacity(0.1),
-              child:
-                  LoadingIndicator(), // Muestra el widget de indicador de carga
+              child: LoadingIndicator(),
             ),
           );
         },
       );
 
-      Product? scannedProduct =
-          await detectObjectsWithCloudVision(picture.path);
+      Product? scannedProduct = await detectObjectsWithCloudVision(picture.path);
       Navigator.pop(context);
 
       if (scannedProduct != null) {
-/*         List<Product> recommendedProducts =
-            await getRecommendedProducts(scannedProduct); */
-
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ProductDetailPage(
               product: scannedProduct,
               recommendedProducts: [],
-              ask: true,
+              ask: true
             ),
           ),
         );
@@ -137,8 +127,7 @@ class SearchProductPage extends StatelessWidget {
   }
 
   Future<Product?> detectObjectsWithCloudVision(String imagePath) async {
-    final apiUrl =
-        'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyC8lZz1_tMeY297wjg3WfcnAwykoAjnCig';
+    final apiUrl = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyC8lZz1_tMeY297wjg3WfcnAwykoAjnCig';
     final imageFile = File(imagePath);
 
     if (!imageFile.existsSync()) {
@@ -174,9 +163,7 @@ class SearchProductPage extends StatelessWidget {
 
     if (response.statusCode == 200) {
       final responseBody = json.decode(response.body);
-
-      final objects =
-          responseBody['responses'][0]['localizedObjectAnnotations'];
+      final objects = responseBody['responses'][0]['localizedObjectAnnotations'];
       bool objectWasFound = false;
 
       if (objects != null) {
@@ -210,8 +197,7 @@ class SearchProductPage extends StatelessWidget {
         return null;
       }
     } else {
-      print(
-          'Error al enviar la imagen a Google Cloud Vision. Código de respuesta: ${response.statusCode}');
+      print( 'Error al enviar la imagen a Google Cloud Vision. Código de respuesta: ${response.statusCode}');
       return null;
     }
     return null;
@@ -228,7 +214,7 @@ class SearchProductPage extends StatelessWidget {
               width: double.infinity,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0), // Padding horizontal
+                    horizontal: 16.0),
                 child: ElevatedButton(
                   onPressed: () {
                     _scanBarcode(context);
@@ -263,17 +249,16 @@ class SearchProductPage extends StatelessWidget {
             SizedBox(height: 20),
             SizedBox(
               width: double
-                  .infinity, // Ancho máximo para igualar el tamaño de los botones
+                  .infinity,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0), // Padding horizontal
+                    horizontal: 16.0),
                 child: ElevatedButton(
                   onPressed: () {
                     _takePicture(context);
                   },
                   style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.green),
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                     padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
                       EdgeInsets.all(16.0),
                     ),

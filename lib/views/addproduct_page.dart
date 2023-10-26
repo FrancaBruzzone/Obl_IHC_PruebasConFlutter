@@ -15,7 +15,7 @@ class AddProductPage extends StatefulWidget {
 }
 
 class _AddProductPageState extends State<AddProductPage> {
-  final String productCode; // Agregar un campo para guardar el productCode
+  final String productCode;
   _AddProductPageState(this.productCode);
 
   late TextEditingController nameController;
@@ -42,7 +42,6 @@ class _AddProductPageState extends State<AddProductPage> {
   }
 
   void _saveProduct() async {
-    // Lógica para guardar el nuevo producto en la base de datos
     Product p = getProductInfo();
 
     if (pic != null) {
@@ -64,8 +63,7 @@ class _AddProductPageState extends State<AddProductPage> {
   Future<void> saveProductInCloud(Product p) async {
     String _responseText = "";
 
-    final String apiUrl =
-        'https://ihc.gil.com.uy/api/products'; // Reemplaza con la URL de tu API
+    final String apiUrl = 'https://ihc.gil.com.uy/api/products';
 
     final String requestBody = jsonEncode({
       'code': this.productCode,
@@ -89,12 +87,10 @@ class _AddProductPageState extends State<AddProductPage> {
     );
 
     if (response.statusCode == 200) {
-      // La solicitud fue exitosa
       setState(() {
         _responseText = 'Respuesta del servidor: ${response.body}';
       });
     } else {
-      // La solicitud falló
       setState(() {
         _responseText = 'Error en la solicitud: ${response.statusCode}';
       });
@@ -107,6 +103,7 @@ class _AddProductPageState extends State<AddProductPage> {
       if (picture == null) {
         return;
       }
+
       File picpath = await changeFileNameOnly(File(picture.path), "${this.productCode}.jpg");
       var headers = {'Authorization': 'ihc', 'Content-Type': 'image/jpeg'};
       const String apiUrl = 'https://ihc.gil.com.uy/upload'; 
@@ -117,16 +114,12 @@ class _AddProductPageState extends State<AddProductPage> {
       request.headers.addAll(headers);
       http.StreamedResponse response = await request.send();
 
-
-
       if (response.statusCode == 200) {
-        // La solicitud fue exitosa
         setState(() async {
           _responseText =
               'Respuesta del servidor: ${await response.stream.bytesToString()}';
         });
       } else {
-        // La solicitud falló
         setState(() {
           _responseText = 'Error en la solicitud: ${response.statusCode}';
         });
@@ -140,29 +133,29 @@ class _AddProductPageState extends State<AddProductPage> {
 
   Product getProductInfo() {
     return Product(
-        name: nameController.text,
-        description: descriptionController.text,
-        environmentalInfo: environmentalInfoController.text,
-        imageUrl: 'https://ihc.gil.com.uy/images/${productCode}.jpg',
-        category: '',
-        environmentalCategory: '');
+      name: nameController.text,
+      description: descriptionController.text,
+      environmentalInfo: environmentalInfoController.text,
+      imageUrl: 'https://ihc.gil.com.uy/images/${productCode}.jpg',
+      category: '',
+      environmentalCategory: ''
+    );
   }
 
-
-Future<File> changeFileNameOnly(File file, String newFileName) {
-  var path = file.path;
-  var lastSeparator = path.lastIndexOf(Platform.pathSeparator);
-  var newPath = path.substring(0, lastSeparator + 1) + newFileName;
-  return file.rename(newPath);
-}
+  Future<File> changeFileNameOnly(File file, String newFileName) {
+    var path = file.path;
+    var lastSeparator = path.lastIndexOf(Platform.pathSeparator);
+    var newPath = path.substring(0, lastSeparator + 1) + newFileName;
+    return file.rename(newPath);
+  }
 
   Future<void> _takePicture(BuildContext context) async {
     final picker = ImagePicker();
     final XFile? picture = await picker.pickImage(
       source: ImageSource.camera,
-      imageQuality: 30, // Define la calidad de la imagen (0-100)
-      maxWidth: 800, // Define el ancho máximo de la imagen
-      maxHeight: 600, // Define la altura máxima de la imagen
+      imageQuality: 30,
+      maxWidth: 800,
+      maxHeight: 600,
     );
 
     if (picture != null) {
@@ -213,7 +206,6 @@ Future<File> changeFileNameOnly(File file, String newFileName) {
             ),
             SizedBox(height: 20),
             Center(
-// Ancho máximo para igualar el tamaño de los botones
               child: ElevatedButton(
                 onPressed: () {
                   _takePicture(context);

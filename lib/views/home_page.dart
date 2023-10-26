@@ -8,7 +8,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3, // Número de pestañas
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.green,
@@ -28,7 +28,6 @@ class HomePage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            // Contenido de la pestaña 1
             Column(
               children: [
                 Expanded(
@@ -36,7 +35,6 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ),
-            // Contenido de la pestaña 2
             Column(
               children: [
                 Expanded(
@@ -44,7 +42,6 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ),
-            // Contenido de la pestaña 3
             Column(
               children: [
                 Expanded(

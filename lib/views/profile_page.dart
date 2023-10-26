@@ -4,11 +4,11 @@ import 'package:obl_ihc_pruebasconflutter/views/editprofile_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+void _saveData(String value) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString("token", value);
+}
 
-  void _saveData(String value) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("token", value);
-  }
 class ProfilePage extends StatelessWidget {
   final user = User(
     'Franca',
@@ -62,7 +62,7 @@ class ProfilePage extends StatelessWidget {
                 );
               },
               icon: Icon(
-                Icons.exit_to_app, // Icono de cierre de sesión
+                Icons.exit_to_app,
                 color: Colors.white,
               ),
               label: Text('Salir', style: TextStyle(color: Colors.white)),

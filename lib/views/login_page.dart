@@ -7,10 +7,10 @@ import 'package:obl_ihc_pruebasconflutter/views/recoverypassword_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-  void _saveData(String value) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("token", value);
-  }
+void _saveData(String value) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString("token", value);
+}
 
 class LoginPage extends StatefulWidget {
   @override
@@ -19,10 +19,9 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late TextEditingController emailController = TextEditingController();
-
   late TextEditingController passwordController = TextEditingController();
-
   bool isError = false;
+
   void setDemo() {
     setState(() {
       emailController = TextEditingController(text: "demo@greentrace.uy");
@@ -51,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 16.0),
             TextField(
               controller: passwordController,
-              obscureText: true, // Para ocultar la contraseña
+              obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Contraseña',
               ),
@@ -77,7 +76,6 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   }
                 } catch (e) {
-                  // Credenciales incorrectas o cuenta inexistente
                   print('Error de autenticación: $e');
                 }
               },

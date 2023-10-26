@@ -8,7 +8,6 @@ class ResetPasswordPage extends StatelessWidget {
 
     void _resetPassword() {
       String newPassword = newPasswordController.text;
-      // Lógica para restablecer la contraseña
     }
 
     return Scaffold(

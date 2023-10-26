@@ -32,18 +32,18 @@ class ArticleDetailPage extends StatelessWidget {
               style: TextStyle(fontSize: 16.0),
             ),
             SizedBox(height: 16.0),
-            TextButton(
-              onPressed: () {
-                launch(article.url);
-              },
-              child: Text(
-                'Leer artículo completo',
-                style: TextStyle(
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
+            if (article.url != null && article.url != '')
+              TextButton(
+                onPressed: () {
+                  launch(article.url!);
+                },
+                child: Text('Leer artículo completo',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

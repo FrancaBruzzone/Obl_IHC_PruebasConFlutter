@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:obl_ihc_pruebasconflutter/views/home_page.dart';
-import 'package:obl_ihc_pruebasconflutter/views/recoverypassword_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/forgotpassword_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,12 +19,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late TextEditingController emailController = TextEditingController();
   late TextEditingController passwordController = TextEditingController();
-  bool isError = false;
 
   void setDemo() {
     setState(() {
-      emailController = TextEditingController(text: "demo@greentrace.uy");
-      passwordController = TextEditingController(text: "demo1234");
+      emailController.text = "demo@greentrace.uy";
+      passwordController.text = "demo1234";
     });
   }
 
@@ -68,23 +66,32 @@ class _LoginPageState extends State<LoginPage> {
                   );
 
                   if (userCredential.user != null) {
-                     _saveData("yes");
+                    final User user = userCredential.user!;
+                    _saveData("yes");
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => HomePage(),
+                        builder: (context) => HomePage(user),
                       ),
                     );
                   }
                 } catch (e) {
-                  print('Error de autenticación: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Credenciales incorrectas',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      duration: Duration(seconds: 5),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
                 }
               },
               icon: Icon(
                 Icons.login,
                 color: Colors.white,
               ),
-              label: Text(
-                'Iniciar sesión',
+              label: Text('Iniciar sesión',
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -93,12 +100,11 @@ class _LoginPageState extends State<LoginPage> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => RecoveryPasswordPage(),
+                    builder: (context) => ForgotPasswordPage(),
                   ),
                 );
               },
-              child: Text(
-                'Olvidé mi contraseña',
+              child: Text('Olvidé mi contraseña',
                 style: TextStyle(
                   color: Colors.blue,
                   decoration: TextDecoration.underline,
@@ -110,8 +116,7 @@ class _LoginPageState extends State<LoginPage> {
               onTap: () {
                 setDemo();
               },
-              child: Text(
-                'Iniciar Demo',
+              child: Text('Iniciar Demo',
                 style: TextStyle(
                   color: Colors.blue,
                   decoration: TextDecoration.underline,
@@ -124,14 +129,14 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   ElevatedButton.icon(
                     style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
-                        minimumSize: MaterialStateProperty.all<Size>(Size(40, 40))
+                      ),
+                      minimumSize: MaterialStateProperty.all<Size>(Size(40, 40)),
                     ),
                     onPressed: () async {
                       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -144,10 +149,11 @@ class _LoginPageState extends State<LoginPage> {
                       final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
 
                       if (userCredential.user != null) {
-                         _saveData("yes");
+                        final User user = userCredential.user!;
+                        _saveData("yes");
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                            builder: (context) => HomePage(),
+                            builder: (context) => HomePage(user),
                           ),
                         );
                       }
@@ -156,63 +162,23 @@ class _LoginPageState extends State<LoginPage> {
                       Icons.g_mobiledata,
                       color: Colors.white,
                     ),
-                    label: Text(
-                      'Iniciar sesión con Google',
+                    label: Text('Iniciar sesión con Google',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  ElevatedButton.icon(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                        minimumSize: MaterialStateProperty.all<Size>(Size(40, 40))
-                    ),
-                    onPressed: () async {
-                      final LoginResult result = await FacebookAuth.instance.login();
-
-                      if (result.status == LoginStatus.success) {
-                        final AccessToken accessToken = result.accessToken!;
-                        final AuthCredential credential = FacebookAuthProvider.credential(accessToken.token);
-                        final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-
-                        if (userCredential.user != null) {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => HomePage(),
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    icon: Icon(
-                      Icons.facebook,
-                      color: Colors.white,
-                    ),
-                    label: Text(
-                      'Iniciar sesión con Facebook',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  )
                 ],
               ),
             ),
             SizedBox(height: 16.0),
             GestureDetector(
               onTap: () {
-                
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => RegisterPage(),
                   ),
                 );
               },
-              child: Text(
-                '¿No tienes una cuenta? Regístrate aquí',
+              child: Text('¿No tienes una cuenta? Regístrate aquí',
                 style: TextStyle(
                   color: Colors.blue,
                   decoration: TextDecoration.underline,

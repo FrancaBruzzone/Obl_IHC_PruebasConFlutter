@@ -2,17 +2,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
-import 'package:obl_ihc_pruebasconflutter/views/editproduct_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'package:obl_ihc_pruebasconflutter/views/recommendedproducts_section.dart';
 
-class ProductDetailPage extends StatefulWidget {
+class CameraProductDetailPage extends StatefulWidget {
   final Product product;
   late List<Product> recommendedProducts;
   final bool showDetails;
   final bool ask;
 
-  ProductDetailPage({
+  CameraProductDetailPage({
     required this.product,
     required this.recommendedProducts,
     this.showDetails = true,
@@ -20,17 +19,17 @@ class ProductDetailPage extends StatefulWidget {
   });
 
   @override
-  State<ProductDetailPage> createState() => _ProductDetailPageState(product, recommendedProducts, showDetails, ask);
+  State<CameraProductDetailPage> createState() => _CameraProductDetailPageState(product, recommendedProducts, showDetails, ask);
 }
 
-class _ProductDetailPageState extends State<ProductDetailPage> {
+class _CameraProductDetailPageState extends State<CameraProductDetailPage> {
   final Product product;
   late List<Product> recommendedProducts;
   final bool showDetails;
   bool loadingRecommendedProducts = true;
   bool ask = false;
 
-  _ProductDetailPageState(this.product, this.recommendedProducts, this.showDetails, this.ask);
+  _CameraProductDetailPageState(this.product, this.recommendedProducts, this.showDetails, this.ask);
 
   @override
   void initState() {
@@ -99,71 +98,19 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 16),
-              Text(
-                widget.product.name,
+              Text(widget.product.name,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 8),
-              Text(
-                'Información Ambiental:',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                widget.product.environmentalInfo,
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Descripción:',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                widget.product.description,
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-              ),
               if (widget.showDetails) ...[
                 SizedBox(height: 20),
                 Center(
-                  child: Image.network(
-                    widget.product.imageUrl,
-                    width: 60,
-                  )
-                ),
-                Center(
-                  child: ElevatedButton.icon(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.green),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => EditProductPage(widget.product),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.edit,
-                      color: Colors.white,
-                    ),
-                    label: Text(
-                      'Editar',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+                    child: Image.file(widget.product.imageFile!,
+                      width: 60,
+                    )
                 ),
                 SizedBox(height: 20),
                 Divider(
@@ -174,27 +121,24 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   endIndent: 20,
                 ),
                 SizedBox(height: 20),
-                Text(
-                  'Productos recomendados:',
+                Text('Productos recomendados:',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 FutureBuilder(
-                  future: Future.value(recommendedProducts),
-                  builder: (context, snapshot) {
-                    if (loadingRecommendedProducts) {
-                      return LoadingIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (snapshot.hasData) {
-                      return RecommendedProductsSection(
-                          recommendedProducts
-                      );
+                    future: Future.value(recommendedProducts),
+                    builder: (context, snapshot) {
+                      if (loadingRecommendedProducts) {
+                        return LoadingIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.hasData) {
+                        return RecommendedProductsSection( recommendedProducts, false );
+                      }
+                      return Container();
                     }
-                    return Container();
-                  }
                 ),
               ],
             ],

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
-import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/barcodeproductdetail_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/cameraproductdetail_page.dart';
 
 class RecommendedProductsSection extends StatelessWidget {
   final List<Product> recommendedProducts;
-  RecommendedProductsSection(this.recommendedProducts);
+  final bool isBarcodeDetail;
+
+  RecommendedProductsSection(this.recommendedProducts, this.isBarcodeDetail);
 
   String _getFirstWords(String content) {
     List<String> words = content.split(' ');
@@ -29,20 +32,34 @@ class RecommendedProductsSection extends StatelessWidget {
             title: Text(recommendedProducts[index].name),
             subtitle: Container(
               margin: EdgeInsets.only(top: 8.0),
-              child: Text(_getFirstWords(recommendedProducts[index].description) + '...'),
+              child: Text(_getFirstWords(recommendedProducts[index].description!) + '...'),
             ),
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ProductDetailPage(
-                        product: recommendedProducts[index],
-                        recommendedProducts: recommendedProducts,
-                        showDetails: false,
-                        ask:false
-                      ),
-                ),
-              );
+              if (this.isBarcodeDetail) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        BarcodeProductDetailPage(
+                            product: recommendedProducts[index],
+                            recommendedProducts: recommendedProducts,
+                            showDetails: false,
+                            ask:false
+                        ),
+                  ),
+                );
+              } else {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        CameraProductDetailPage(
+                            product: recommendedProducts[index],
+                            recommendedProducts: recommendedProducts,
+                            showDetails: false,
+                            ask:false
+                        ),
+                  ),
+                );
+              }
             },
           ),
         );

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/home_page.dart';
@@ -10,6 +11,7 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   bool isLogged = false;
+  User? currentUser;
   static const String _key = 'token';
 
   @override
@@ -21,10 +23,10 @@ class _AppState extends State<App> {
   void _loadData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String value = prefs.getString(_key) ?? '';
-    setState(() {
-
-      isLogged = (value == '') ? false : true;
-    });
+    isLogged = (value == '') ? false : true;
+    if (isLogged) {
+      currentUser = FirebaseAuth.instance.currentUser;
+    }
   }
 
   void _saveData(String value) async {
@@ -35,7 +37,7 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-       home: (isLogged) ? HomePage() : LoginPage(),
+       home: (isLogged) ? HomePage(currentUser!) : LoginPage(),
     );
   }
 }

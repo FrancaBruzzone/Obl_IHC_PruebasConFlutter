@@ -1,10 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/views/articles_page.dart';
-import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/profile_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/searchproduct_page.dart';
 
 class HomePage extends StatelessWidget {
+  final User user;
+
+  HomePage(this.user);
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -45,7 +49,7 @@ class HomePage extends StatelessWidget {
             Column(
               children: [
                 Expanded(
-                  child: ProfilePage(),
+                  child: ProfilePage(user),
                 ),
               ],
             ),

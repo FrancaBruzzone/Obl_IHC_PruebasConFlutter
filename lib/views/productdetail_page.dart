@@ -12,17 +12,15 @@ class ProductDetailPage extends StatefulWidget {
   final bool showDetails;
   final bool ask;
 
-
   ProductDetailPage({
     required this.product,
     required this.recommendedProducts,
     this.showDetails = true,
-    required this.ask,
+    required this.ask
   });
 
   @override
-  State<ProductDetailPage> createState() =>
-      _ProductDetailPageState(product, recommendedProducts, showDetails, ask);
+  State<ProductDetailPage> createState() => _ProductDetailPageState(product, recommendedProducts, showDetails, ask);
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
@@ -32,18 +30,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   bool loadingRecommendedProducts = true;
   bool ask = false;
 
-  _ProductDetailPageState(
-      this.product, this.recommendedProducts, this.showDetails, this.ask);
-
+  _ProductDetailPageState(this.product, this.recommendedProducts, this.showDetails, this.ask);
 
   @override
   void initState() {
     super.initState();
     getRecommendedProducts(product,ask);
-/*     this.recommendedProducts = [
-      Product(category: "",description: "", imageUrl: "", environmentalCategory: "", environmentalInfo: "", name: "nombre1"),
-      Product(category: "",description: "", imageUrl: "", environmentalCategory: "", environmentalInfo: "", name: "nombre2")
-    ]; */
   }
 
   Future<void> getRecommendedProducts(Product scannedProduct, bool ask) async {
@@ -54,11 +46,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       };
 
       http.Response response = await http.get(
-          Uri.parse(
-              'https://ihc.gil.com.uy/api/querys?filter=${scannedProduct.description}'),
-          headers: headers);
+          Uri.parse('https://ihc.gil.com.uy/api/querys?filter=${scannedProduct.description}'),
+          headers: headers
+      );
+
       var data = json.decode(response.body);
       List<Product> recommendedProd = [];
+
       if (data != null) {
         for (var p in data) {
           var x = Product(
@@ -67,7 +61,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               imageUrl: "",
               environmentalInfo: p["environmentalInfo"],
               category: p["category"],
-              environmentalCategory: p["environmentalCategory"]);
+              environmentalCategory: p["environmentalCategory"]
+          );
 
           recommendedProd.add(x);
         }
@@ -77,22 +72,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           loadingRecommendedProducts = false;
         });
       } else {
-                setState(() {
+        setState(() {
           recommendedProducts = recommendedProd;
           loadingRecommendedProducts = false;
         });
       }
     } catch (e) {
-              setState(() {
-          recommendedProducts = [];
-          loadingRecommendedProducts = false;
-        });
+      setState(() {
+        recommendedProducts = [];
+        loadingRecommendedProducts = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    //getRecommendedProducts(product);
     return Scaffold(
       appBar: AppBar(
         title: Text('Detalles del producto'),
@@ -143,11 +137,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               if (widget.showDetails) ...[
                 SizedBox(height: 20),
                 Center(
-                    child: Image.network(
-                  widget.product.imageUrl,
-                  width: 60,
-                  // Esto utiliza el administrador de caché predeterminado
-                )),
+                  child: Image.network(
+                    widget.product.imageUrl,
+                    width: 60,
+                  )
+                ),
                 Center(
                   child: ElevatedButton.icon(
                     style: ButtonStyle(
@@ -188,18 +182,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   ),
                 ),
                 FutureBuilder(
-                    future: Future.value(recommendedProducts),
-                    builder: (context, snapshot) {
-                      if (loadingRecommendedProducts) {
-                        return LoadingIndicator(); // Muestra un indicador de carga
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else if (snapshot.hasData) {
-                        return RecommendedProductsSection(
-                            recommendedProducts);
-                      }
-                      return Container();
-                    }),
+                  future: Future.value(recommendedProducts),
+                  builder: (context, snapshot) {
+                    if (loadingRecommendedProducts) {
+                      return LoadingIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      return RecommendedProductsSection(
+                          recommendedProducts
+                      );
+                    }
+                    return Container();
+                  }
+                ),
               ],
             ],
           ),

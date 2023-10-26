@@ -9,14 +9,13 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-   bool isLogged = false;
+  bool isLogged = false;
   static const String _key = 'token';
 
-
-    @override
+  @override
   void initState() {
     super.initState();
-    _loadData(); // Cargamos el valor almacenado en las preferencias compartidas
+    _loadData();
   }
 
   void _loadData() async {
@@ -28,7 +27,7 @@ class _AppState extends State<App> {
     });
   }
 
-    void _saveData(String value) async {
+  void _saveData(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(_key, value);
   }

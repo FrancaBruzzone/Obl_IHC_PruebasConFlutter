@@ -4,7 +4,6 @@ import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
 
 class RecommendedProductsSection extends StatelessWidget {
   final List<Product> recommendedProducts;
-
   RecommendedProductsSection(this.recommendedProducts);
 
   String _getFirstWords(String content) {

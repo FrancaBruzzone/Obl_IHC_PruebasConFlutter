@@ -8,7 +8,6 @@ class RecoveryPasswordPage extends StatelessWidget {
 
     void _sendRecoveryEmail() {
       String userEmail = emailController.text;
-      // Enviar un correo con un enlace de recuperación a 'userEmail'
     }
 
     return Scaffold(
@@ -46,7 +45,7 @@ class RecoveryPasswordPage extends StatelessWidget {
                 );
               },
               icon: Icon(
-                Icons.send, // Icono de enviar
+                Icons.send,
                 color: Colors.white,
               ),
               label: Text(

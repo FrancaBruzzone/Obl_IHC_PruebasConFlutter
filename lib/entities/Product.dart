@@ -14,6 +14,6 @@ class Product {
     required this.imageUrl,
     required this.environmentalInfo,
     required this.category,
-    required this.environmentalCategory,
+    required this.environmentalCategory
   });
 }

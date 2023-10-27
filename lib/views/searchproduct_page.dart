@@ -140,7 +140,7 @@ class SearchProductPage extends StatelessWidget {
       Uri.parse('$endpoint?key=$apiKey'),
       body: {
         'q': text,
-        'target': 'es', // Código de idioma para español
+        'target': 'es',
       },
     );
 
@@ -148,8 +148,7 @@ class SearchProductPage extends StatelessWidget {
       final translatedText = json.decode(response.body)['data']['translations'][0]['translatedText'];
       return translatedText;
     } else {
-      // Manejar errores aquí
-      return text; // Devolver el texto original en caso de error
+      return text;
     }
   }
 

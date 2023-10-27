@@ -58,6 +58,8 @@ class SearchProductPage extends StatelessWidget {
         );
       }
     } catch (e) {
+      Navigator.pop(context);
+
       if (e is! FormatException) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -240,7 +242,6 @@ class SearchProductPage extends StatelessWidget {
       );
       return null;
     }
-    return null;
   }
 
   @override

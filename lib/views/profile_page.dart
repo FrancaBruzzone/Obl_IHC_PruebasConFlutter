@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:obl_ihc_pruebasconflutter/views/editprofile_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,10 +31,25 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _signOut(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Container(
+            width: 80,
+            height: 80,
+            color: Colors.white.withOpacity(0.1),
+            child: LoadingIndicator(),
+          ),
+        );
+      },
+    );
+
     try {
       await _revokeGoogleSignIn();
       await FirebaseAuth.instance.signOut();
       _saveData("");
+      Navigator.pop(context);
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => LoginPage(),
@@ -41,6 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
             (route) => false,
       );
     } catch (e) {
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

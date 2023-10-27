@@ -53,7 +53,7 @@ class RegisterPage extends StatelessWidget {
                   );
 
                   User? user = userCredential.user;
-                  await user?.updateProfile(displayName: '${nameController.text}');
+                  await user?.updateDisplayName('${nameController.text}');
 
                   Navigator.push(
                     context,

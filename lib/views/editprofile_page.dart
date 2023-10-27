@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 
 class EditProfilePage extends StatefulWidget {
   final User? user;
@@ -36,6 +37,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _saveProfileChanges() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Container(
+            width: 80,
+            height: 80,
+            color: Colors.white.withOpacity(0.1),
+            child: LoadingIndicator(),
+          ),
+        );
+      },
+    );
+
     try {
       final String newDisplayName = nameController.text;
       final String newEmail = emailController.text;
@@ -61,8 +76,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
         emailController.text = _user?.email ?? '';
       }
 
+      Navigator.pop(context);
       Navigator.pop(context, _user);
     } catch (e) {
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

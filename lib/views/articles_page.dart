@@ -34,8 +34,9 @@ class _ArticlesPageState extends State<ArticlesPage> {
         .map((a) => Article(
           type: a['category'] as String,
           title: a['title'] as String,
-          content: a['description'] as String,
-          url: a['links'][0] as String,
+          description: a['description'] as String,
+          content: a['content'] as String,
+          articleUrl: a['articleUrl'] as String,
         )).toList();
 
       setState(() {
@@ -90,7 +91,7 @@ class _ArticlesPageState extends State<ArticlesPage> {
                 title: Text(articles[index].title),
                 subtitle: Container(
                   margin: const EdgeInsets.only(top: 8.0),
-                  child: Text(_getFirstWords(articles[index].content) + '...'),
+                  child: Text(_getFirstWords(articles[index].description) + '...'),
                 ),
                 onTap: () {
                   Navigator.of(context).push(

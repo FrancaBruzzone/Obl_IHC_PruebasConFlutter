@@ -5,9 +5,8 @@ import 'package:obl_ihc_pruebasconflutter/views/cameraproductdetail_page.dart';
 
 class RecommendedProductsSection extends StatelessWidget {
   final List<Product> recommendedProducts;
-  final bool isBarcodeDetail;
 
-  RecommendedProductsSection(this.recommendedProducts, this.isBarcodeDetail);
+  RecommendedProductsSection(this.recommendedProducts);
 
   String _getFirstWords(String content) {
     List<String> words = content.split(' ');
@@ -35,31 +34,17 @@ class RecommendedProductsSection extends StatelessWidget {
               child: Text(_getFirstWords(recommendedProducts[index].description!) + '...'),
             ),
             onTap: () {
-              if (this.isBarcodeDetail) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        BarcodeProductDetailPage(
-                            product: recommendedProducts[index],
-                            recommendedProducts: recommendedProducts,
-                            showDetails: false,
-                            ask:false
-                        ),
-                  ),
-                );
-              } else {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        CameraProductDetailPage(
-                            product: recommendedProducts[index],
-                            recommendedProducts: recommendedProducts,
-                            showDetails: false,
-                            ask:false
-                        ),
-                  ),
-                );
-              }
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      BarcodeProductDetailPage(
+                          product: recommendedProducts[index],
+                          recommendedProducts: recommendedProducts,
+                          showDetails: false,
+                          ask:false
+                      ),
+                ),
+              );
             },
           ),
         );

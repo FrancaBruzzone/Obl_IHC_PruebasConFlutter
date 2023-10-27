@@ -145,7 +145,7 @@ class _CameraProductDetailPageState extends State<CameraProductDetailPage> {
                             ),
                           );
                         } else {
-                          return RecommendedProductsSection(recommendedProducts, false);
+                          return RecommendedProductsSection(recommendedProducts);
                         }
                       }
                       return Container();

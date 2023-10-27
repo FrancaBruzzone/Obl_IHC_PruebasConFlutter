@@ -192,7 +192,7 @@ class _BarcodeProductDetailPageState extends State<BarcodeProductDetailPage> {
                             ),
                           );
                         } else {
-                          return RecommendedProductsSection(recommendedProducts, false);
+                          return RecommendedProductsSection(recommendedProducts);
                         }
                       }
                       return Container();

@@ -98,34 +98,34 @@ class _BarcodeProductDetailPageState extends State<BarcodeProductDetailPage> {
               Text(
                 widget.product.name,
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 8),
               Text('Información Ambiental:',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 widget.product.environmentalInfo!,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                 ),
               ),
               SizedBox(height: 16),
               Text('Descripción:',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 widget.product.description!,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                 ),
               ),
               if (widget.showDetails) ...[
@@ -133,9 +133,10 @@ class _BarcodeProductDetailPageState extends State<BarcodeProductDetailPage> {
                 Center(
                   child: Image.network(
                     widget.product.imageUrl!,
-                    width: 60,
+                    width: 100,
                   )
                 ),
+                SizedBox(height: 20),
                 Center(
                   child: ElevatedButton.icon(
                     style: ButtonStyle(
@@ -158,7 +159,7 @@ class _BarcodeProductDetailPageState extends State<BarcodeProductDetailPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 6),
                 Divider(
                   color: Colors.grey,
                   thickness: 2.0,
@@ -174,17 +175,28 @@ class _BarcodeProductDetailPageState extends State<BarcodeProductDetailPage> {
                   ),
                 ),
                 FutureBuilder(
-                  future: Future.value(recommendedProducts),
-                  builder: (context, snapshot) {
-                    if (loadingRecommendedProducts) {
-                      return LoadingIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (snapshot.hasData) {
-                      return RecommendedProductsSection(recommendedProducts, true);
+                    future: Future.value(recommendedProducts),
+                    builder: (context, snapshot) {
+                      if (loadingRecommendedProducts) {
+                        return LoadingIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.hasData) {
+                        if (recommendedProducts.isEmpty) {
+                          return Text(
+                            'No se encontraron recomendaciones para el producto',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
+                          );
+                        } else {
+                          return RecommendedProductsSection(recommendedProducts, false);
+                        }
+                      }
+                      return Container();
                     }
-                    return Container();
-                  }
                 ),
               ],
             ],

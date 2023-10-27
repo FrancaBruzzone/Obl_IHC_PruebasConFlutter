@@ -45,7 +45,7 @@ class _CameraProductDetailPageState extends State<CameraProductDetailPage> {
       };
 
       http.Response response = await http.get(
-          Uri.parse('https://ihc.gil.com.uy/api/querys?filter=${scannedProduct.description}'),
+          Uri.parse('https://ihc.gil.com.uy/api/querys?filter=${scannedProduct.name}'),
           headers: headers
       );
 
@@ -109,7 +109,7 @@ class _CameraProductDetailPageState extends State<CameraProductDetailPage> {
                 SizedBox(height: 20),
                 Center(
                     child: Image.file(widget.product.imageFile!,
-                      width: 60,
+                      width: 180,
                     )
                 ),
                 SizedBox(height: 20),
@@ -135,7 +135,18 @@ class _CameraProductDetailPageState extends State<CameraProductDetailPage> {
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else if (snapshot.hasData) {
-                        return RecommendedProductsSection( recommendedProducts, false );
+                        if (recommendedProducts.isEmpty) {
+                          return Text(
+                            'No se encontraron recomendaciones para el producto',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
+                          );
+                        } else {
+                          return RecommendedProductsSection(recommendedProducts, false);
+                        }
                       }
                       return Container();
                     }

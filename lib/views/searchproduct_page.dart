@@ -9,6 +9,7 @@ import 'package:obl_ihc_pruebasconflutter/views/cameraproductdetail_page.dart';
 import 'dart:convert';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 
 class SearchProductPage extends StatelessWidget {
   Future<void> _scanBarcode(BuildContext context) async {
@@ -131,6 +132,26 @@ class SearchProductPage extends StatelessWidget {
     }
   }
 
+  Future<String> translateToSpanish(String text) async {
+    final apiKey = 'AIzaSyC8lZz1_tMeY297wjg3WfcnAwykoAjnCig';
+    final endpoint = 'https://translation.googleapis.com/language/translate/v2';
+
+    final response = await http.post(
+      Uri.parse('$endpoint?key=$apiKey'),
+      body: {
+        'q': text,
+        'target': 'es',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final translatedText = json.decode(response.body)['data']['translations'][0]['translatedText'];
+      return translatedText;
+    } else {
+      return text;
+    }
+  }
+
   Future<Product?> detectObjectsWithCloudVision(BuildContext context, String imagePath) async {
     final apiUrl = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyC8lZz1_tMeY297wjg3WfcnAwykoAjnCig';
     final imageFile = File(imagePath);
@@ -152,8 +173,7 @@ class SearchProductPage extends StatelessWidget {
     final request = {
       'requests': [{
         'image': { 'content': base64Encode(imageFile.readAsBytesSync()) },
-        'features': [{ 'type': 'OBJECT_LOCALIZATION' }],
-        'imageContext': { 'languageHints': ['es'] },
+        'features': [{ 'type': 'OBJECT_LOCALIZATION' }]
       }],
     };
 
@@ -177,11 +197,13 @@ class SearchProductPage extends StatelessWidget {
         if (objects.isNotEmpty) {
           final bestObject = objects[0];
           final double bestScore = bestObject['score'];
-          final String description = bestObject['name'];
+          final String name = bestObject['name'];
 
           if (bestScore >= 0.75) {
+            final name = bestObject['name'];
+            final translatedName = await translateToSpanish(name);
             var x = Product(
-                name: description,
+                name: translatedName,
                 description: '',
                 imageUrl: '',
                 environmentalInfo: '',

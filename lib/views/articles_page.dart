@@ -35,8 +35,8 @@ class _ArticlesPageState extends State<ArticlesPage> {
           type: a['category'] as String,
           title: a['title'] as String,
           description: a['description'] as String,
-          content: a['content'] as String,
           articleUrl: a['articleUrl'] as String,
+          content: a['content'] as String,
         )).toList();
 
       setState(() {
@@ -45,8 +45,13 @@ class _ArticlesPageState extends State<ArticlesPage> {
     }
   }
 
+  createArticles() async {
+    await http.get(Uri.parse('https://ihc.gil.com.uy/api/articles/create'));
+  }
+
   Future<void> _refreshList() async {
-    await getArticles();
+    await createArticles();
+    getArticles();
   }
 
   Icon getTypeArticle(String type) {

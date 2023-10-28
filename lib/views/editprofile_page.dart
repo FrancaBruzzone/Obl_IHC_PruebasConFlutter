@@ -14,7 +14,6 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   User? _user;
   late TextEditingController nameController;
-  late TextEditingController emailController;
   late TextEditingController currentPasswordController;
   late TextEditingController newPasswordController;
 
@@ -24,7 +23,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void initState() {
     super.initState();
     nameController = TextEditingController(text: _user?.displayName ?? '');
-    emailController = TextEditingController(text: _user?.email ?? '');
     currentPasswordController = TextEditingController();
     newPasswordController = TextEditingController();
   }
@@ -32,7 +30,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void dispose() {
     nameController.dispose();
-    emailController.dispose();
     super.dispose();
   }
 
@@ -53,7 +50,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     try {
       final String newDisplayName = nameController.text;
-      final String newEmail = emailController.text;
       final String newPassword = newPasswordController.text;
 
       if (currentPasswordController.text.isNotEmpty && newPassword.isNotEmpty) {
@@ -66,14 +62,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
         await _user?.updatePassword(newPassword);
       }
 
-      if (newDisplayName != _user?.displayName || newEmail != _user?.email) {
+      if (newDisplayName != _user?.displayName) {
         await _user?.updateDisplayName(newDisplayName);
-        await _user?.updateEmail(newEmail);
         await _user?.reload();
         _user = FirebaseAuth.instance.currentUser;
 
         nameController.text = _user?.displayName ?? '';
-        emailController.text = _user?.email ?? '';
       }
 
       Navigator.pop(context);
@@ -115,13 +109,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Padding(
               padding: EdgeInsets.all(16.0),
               child: TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: TextFormField(
                 controller: currentPasswordController,
                 decoration: InputDecoration(labelText: 'Contraseña actual'),
                 obscureText: true,
@@ -135,17 +122,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 obscureText: true,
               ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton.icon(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+            SizedBox(height: 60),
+            SizedBox(
+              width: 130,
+              height: 40,
+              child:
+              ElevatedButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                ),
+                onPressed: _saveProfileChanges,
+                icon: Icon(
+                  Icons.save,
+                  color: Colors.white,
+                ),
+                label: Text('Guardar', style: TextStyle(color: Colors.white)),
               ),
-              onPressed: _saveProfileChanges,
-              icon: Icon(
-                Icons.save,
-                color: Colors.white,
-              ),
-              label: Text('Guardar', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

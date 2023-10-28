@@ -23,6 +23,7 @@ class HomePage extends StatelessWidget {
             ],
           ),
           bottom: TabBar(
+            labelStyle: TextStyle(fontSize: 16),
             tabs: [
               Tab(text: 'Productos'),
               Tab(text: 'Artículos'),

@@ -39,6 +39,8 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Image.asset('images/GREENTRACE_WHITE.png', width: 200),
+            SizedBox(height: 20),
             TextField(
               controller: emailController,
               decoration: InputDecoration(
@@ -53,46 +55,51 @@ class _LoginPageState extends State<LoginPage> {
                 labelText: 'Contraseña',
               ),
             ),
-            SizedBox(height: 16.0),
-            ElevatedButton.icon(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-              ),
-              onPressed: () async {
-                try {
-                  final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                    email: emailController.text,
-                    password: passwordController.text,
-                  );
+            SizedBox(height: 40),
+            SizedBox(
+              width: 160,
+              height: 40,
+              child:
+              ElevatedButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                ),
+                onPressed: () async {
+                  try {
+                    final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: emailController.text,
+                      password: passwordController.text,
+                    );
 
-                  if (userCredential.user != null) {
-                    final User user = userCredential.user!;
-                    _saveData("yes");
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(user),
+                    if (userCredential.user != null) {
+                      final User user = userCredential.user!;
+                      _saveData("yes");
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(user),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Credenciales incorrectas',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        duration: Duration(seconds: 5),
+                        backgroundColor: Colors.red,
                       ),
                     );
                   }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Credenciales incorrectas',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      duration: Duration(seconds: 5),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
-              icon: Icon(
-                Icons.login,
-                color: Colors.white,
-              ),
-              label: Text('Iniciar sesión',
-                style: TextStyle(color: Colors.white),
+                },
+                icon: Icon(
+                  Icons.login,
+                  color: Colors.white,
+                ),
+                label: Text('Iniciar sesión',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
             SizedBox(height: 10.0),

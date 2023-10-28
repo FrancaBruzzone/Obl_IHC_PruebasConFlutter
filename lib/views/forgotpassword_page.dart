@@ -50,13 +50,19 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text('Te enviaremos un enlace para restablecer tu contraseña. \n\nPor favor, proporciona tu dirección de correo electrónico a continuación.',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            SizedBox(height: 100),
             TextField(
               controller: emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
               ),
             ),
-            SizedBox(height: 16.0),
+            SizedBox(height: 60),
             ElevatedButton.icon(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
@@ -69,7 +75,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 color: Colors.white,
               ),
               label: Text(
-                'Enviar enlace para restablecer contraseña',
+                'Enviar enlace',
                 style: TextStyle(color: Colors.white),
               ),
             ),

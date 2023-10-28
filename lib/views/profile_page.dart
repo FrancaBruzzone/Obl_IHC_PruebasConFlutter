@@ -86,45 +86,55 @@ class _ProfilePageState extends State<ProfilePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            _buildProfileInfo('Nombre:', _user?.displayName ?? '', Icons.person),
+            _buildProfileInfo('Nombre y apellido:', _user?.displayName ?? '', Icons.person),
             _buildProfileInfo('Email:', _user?.email ?? '', Icons.email),
-            SizedBox(height: 20),
-            ElevatedButton.icon(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+            SizedBox(height: 80),
+            SizedBox(
+              width: 130,
+              height: 40,
+              child:
+              ElevatedButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => EditProfilePage(_user),
+                    ),
+                  ).then((resultUser) {
+                    if (resultUser != null) {
+                      setState(() {
+                        _user = resultUser;
+                      });
+                    }
+                  });
+                },
+                icon: Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                ),
+                label: Text('Editar', style: TextStyle(color: Colors.white)),
               ),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => EditProfilePage(_user),
-                  ),
-                ).then((resultUser) {
-                  if (resultUser != null) {
-                    setState(() {
-                      _user = resultUser;
-                    });
-                  }
-                });
-              },
-              icon: Icon(
-                Icons.edit,
-                color: Colors.white,
-              ),
-              label: Text('Editar', style: TextStyle(color: Colors.white)),
             ),
             SizedBox(height: 20),
-            ElevatedButton.icon(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+            SizedBox(
+              width: 130,
+              height: 40,
+              child:
+              ElevatedButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                ),
+                onPressed: () {
+                  _signOut(context);
+                },
+                icon: Icon(
+                  Icons.exit_to_app,
+                  color: Colors.white
+                ),
+                label: Text('Salir', style: TextStyle(color: Colors.white)),
               ),
-              onPressed: () {
-                _signOut(context);
-              },
-              icon: Icon(
-                Icons.exit_to_app,
-                color: Colors.white,
-              ),
-              label: Text('Salir', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

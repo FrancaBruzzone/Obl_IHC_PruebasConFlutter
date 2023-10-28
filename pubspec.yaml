@@ -77,6 +77,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - images/huella_carbono.jpg
+    - images/GREENTRACE_WHITE.png
     - images/loading.gif
 
   # An image asset can refer to one or more resolution-specific "variants", see

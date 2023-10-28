@@ -12,6 +12,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class SearchProductPage extends StatelessWidget {
+  final apiKey = 'AIzaSyC8lZz1_tMeY297wjg3WfcnAwykoAjnCig';
+
   Future<void> _scanBarcode(BuildContext context) async {
     try {
       String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
@@ -133,7 +135,6 @@ class SearchProductPage extends StatelessWidget {
   }
 
   Future<String> translateToSpanish(String text) async {
-    final apiKey = 'AIzaSyC8lZz1_tMeY297wjg3WfcnAwykoAjnCig';
     final endpoint = 'https://translation.googleapis.com/language/translate/v2';
 
     final response = await http.post(
@@ -153,7 +154,7 @@ class SearchProductPage extends StatelessWidget {
   }
 
   Future<Product?> detectObjectsWithCloudVision(BuildContext context, String imagePath) async {
-    final apiUrl = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyC8lZz1_tMeY297wjg3WfcnAwykoAjnCig';
+    final apiUrl = 'https://vision.googleapis.com/v1/images:annotate?key=$apiKey';
     final imageFile = File(imagePath);
 
     if (!imageFile.existsSync()) {
@@ -170,100 +171,74 @@ class SearchProductPage extends StatelessWidget {
       return null;
     }
 
-    final request = {
-      'requests': [{
-        'image': { 'content': base64Encode(imageFile.readAsBytesSync()) },
-        'features': [{ 'type': 'OBJECT_LOCALIZATION' }]
-      }],
-    };
+    final maxRetries = 3;
+    double confidenceThreshold = 0.80;
 
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: { 'Content-Type': 'application/json' },
-      body: json.encode(request),
-    );
+    for (int retry = 0; retry < maxRetries; retry++) {
+      final request = {
+        'requests': [
+          {
+            'image': {'content': base64Encode(imageFile.readAsBytesSync())},
+            'features': [{'type': 'OBJECT_LOCALIZATION'}]
+          }
+        ],
+      };
 
-    if (response.statusCode == 200) {
-      final responseBody = json.decode(response.body);
-      final objects = responseBody['responses'][0]['localizedObjectAnnotations'];
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(request),
+      );
 
-      if (objects != null && objects is List) {
-        objects.sort((a, b) {
-          final double scoreA = a['score'];
-          final double scoreB = b['score'];
-          return scoreB.compareTo(scoreA);
-        });
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        final objects = responseBody['responses'][0]['localizedObjectAnnotations'];
 
-        if (objects.isNotEmpty) {
-          final bestObject = objects[0];
-          final double bestScore = bestObject['score'];
-          final String name = bestObject['name'];
+        if (objects != null && objects is List) {
+          objects.sort((a, b) {
+            final double scoreA = a['score'];
+            final double scoreB = b['score'];
+            return scoreB.compareTo(scoreA);
+          });
 
-          if (bestScore >= 0.75) {
-            final name = bestObject['name'];
-            final translatedName = await translateToSpanish(name);
-            var x = Product(
+          if (objects.isNotEmpty) {
+            final bestObject = objects[0];
+            final double bestScore = bestObject['score'];
+            final String name = bestObject['name'];
+
+            if (bestScore >= confidenceThreshold) {
+              final name = bestObject['name'];
+              final translatedName = await translateToSpanish(name);
+              var x = Product(
                 name: translatedName,
                 description: '',
                 imageUrl: '',
                 environmentalInfo: '',
                 category: '',
                 environmentalCategory: '',
-                imageFile: imageFile
-            );
-            return x;
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'No se encontró ningún producto que cumpla con el umbral de confianza del 75%.',
-                  style: TextStyle(color: Colors.white),
-                ),
-                duration: Duration(seconds: 5),
-                backgroundColor: Colors.red,
-              ),
-            );
-            return null;
+                imageFile: imageFile,
+              );
+              return x;
+            } else {
+              confidenceThreshold -= 0.10;
+            }
           }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'No se encontró ningún producto relacionado.',
-                style: TextStyle(color: Colors.white),
-              ),
-              duration: Duration(seconds: 5),
-              backgroundColor: Colors.red,
-            ),
-          );
-          return null;
         }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'No se encontró ningún producto relacionado.',
-              style: TextStyle(color: Colors.white),
-            ),
-            duration: Duration(seconds: 5),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return null;
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Error al enviar la imagen a analizar, reintente más tarde.',
-            style: TextStyle(color: Colors.white),
-          ),
-          duration: Duration(seconds: 5),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return null;
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'No se encontró ningún producto relacionado después de $maxRetries intentos.',
+          style: TextStyle(color: Colors.white),
+        ),
+        duration: Duration(seconds: 5),
+        backgroundColor: Colors.red,
+      ),
+    );
+
+    return null;
   }
 
   @override

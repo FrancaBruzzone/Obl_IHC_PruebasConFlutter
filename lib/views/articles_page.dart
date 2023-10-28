@@ -16,25 +16,29 @@ class _ArticlesPageState extends State<ArticlesPage> {
   List? articlesData;
 
   getArticles() async {
-    http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/articles'));
-    data = json.decode(response.body);
-    articlesData = data?['articles'];
+    try {
+      http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/articles'));
+      data = json.decode(response.body);
+      articlesData = data?['articles'];
 
-    if (articlesData != null) {
-      final List<Article> arts = articlesData!
-        .map((a) => Article(
-          type: a['category'] as String,
-          title: a['title'] as String,
-          description: a['description'] as String,
-          articleUrl: a['articleUrl'] as String,
-          content: a['content'] as String,
-          timestamp: a['timestamp'] as String,
-      )).toList();
+      if (articlesData != null) {
+        final List<Article> arts = articlesData!
+          .map((a) => Article(
+            type: a['category'] as String,
+            title: a['title'] as String,
+            description: a['description'] as String,
+            articleUrl: a['articleUrl'] as String,
+            content: a['content'] as String,
+            timestamp: a['timestamp'] as String,
+        )).toList();
 
-      setState(() {
-        articles = arts;
-        articles.sort((a, b) => (DateTime.parse(b.timestamp).millisecondsSinceEpoch).compareTo(DateTime.parse(a.timestamp).millisecondsSinceEpoch));
-      });
+        setState(() {
+          articles = arts;
+          articles.sort((a, b) => (DateTime.parse(b.timestamp).millisecondsSinceEpoch).compareTo(DateTime.parse(a.timestamp).millisecondsSinceEpoch));
+        });
+      }
+    } catch (e) {
+      return null;
     }
   }
 

@@ -26,25 +26,29 @@ class ArticleDetailPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8.0),
+            SizedBox(height: 20),
             Text(
               article.description,
-              style: TextStyle(fontSize: 16.0),
+              style: TextStyle(fontSize: 18),
             ),
-            SizedBox(height: 8.0),
+            SizedBox(height: 20),
             Text(
-              article.content,
+              article.content + "...",
               style: TextStyle(fontSize: 16.0),
             ),
-            SizedBox(height: 16.0),
-            TextButton(
-              onPressed: () {
-                launch(article.articleUrl);
-              },
-              child: Text('Leer artículo completo',
-                style: TextStyle(
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
+            SizedBox(height: 40),
+            Center(
+              child: TextButton(
+                onPressed: () {
+                  launch(article.articleUrl);
+                },
+                child: Text(
+                  'Leer artículo completo',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),

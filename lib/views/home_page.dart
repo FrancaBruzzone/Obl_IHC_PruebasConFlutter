@@ -6,7 +6,6 @@ import 'package:obl_ihc_pruebasconflutter/views/searchproduct_page.dart';
 
 class HomePage extends StatelessWidget {
   final User user;
-
   HomePage(this.user);
 
   @override

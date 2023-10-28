@@ -4,7 +4,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ArticleDetailPage extends StatelessWidget {
   final Article article;
-
   ArticleDetailPage(this.article);
 
   @override

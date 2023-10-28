@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:obl_ihc_pruebasconflutter/views/editprofile_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
+import 'package:obl_ihc_pruebasconflutter/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void _saveData(String value) async {
@@ -13,7 +14,6 @@ void _saveData(String value) async {
 
 class ProfilePage extends StatefulWidget {
   final User? user;
-
   ProfilePage(this.user);
 
   @override
@@ -22,31 +22,19 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   User? _user;
-
   _ProfilePageState(this._user);
-
-  Future<void> _revokeGoogleSignIn() async {
-    final googleSignIn = GoogleSignIn();
-    await googleSignIn.signOut();
-  }
 
   Future<void> _signOut(BuildContext context) async {
     showDialog(
       context: context,
       builder: (context) {
-        return Dialog(
-          child: Container(
-            width: 80,
-            height: 80,
-            color: Colors.white.withOpacity(0.1),
-            child: LoadingIndicator(),
-          ),
-        );
+        return Utils.getLoaderDialog();
       },
     );
 
     try {
-      await _revokeGoogleSignIn();
+      final googleSignIn = GoogleSignIn();
+      await googleSignIn.signOut();
       await FirebaseAuth.instance.signOut();
       _saveData("");
       Navigator.pop(context);

@@ -9,11 +9,9 @@ import 'package:obl_ihc_pruebasconflutter/views/cameraproductdetail_page.dart';
 import 'dart:convert';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:obl_ihc_pruebasconflutter/utils.dart';
 
 class SearchProductPage extends StatelessWidget {
-  final apiKey = 'AIzaSyC8lZz1_tMeY297wjg3WfcnAwykoAjnCig';
-
   Future<void> _scanBarcode(BuildContext context) async {
     try {
       String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
@@ -65,14 +63,7 @@ class SearchProductPage extends StatelessWidget {
 
       if (e is! FormatException) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Hubo un error al escanear el código de barras, reitente más tarde.',
-              style: TextStyle(color: Colors.white),
-            ),
-            duration: Duration(seconds: 5),
-            backgroundColor: Colors.red,
-          ),
+          Utils.getSnackBarError('Hubo un error al escanear el código de barras, reitente más tarde.')
         );
       }
     }
@@ -92,9 +83,9 @@ class SearchProductPage extends StatelessWidget {
         category: data["category"],
         environmentalCategory: data["environmentalCategory"],
       );
-    } else {
-      return null;
     }
+
+    return null;
   }
 
   Future<void> _takePicture(BuildContext context) async {
@@ -134,39 +125,13 @@ class SearchProductPage extends StatelessWidget {
     }
   }
 
-  Future<String> translateToSpanish(String text) async {
-    final endpoint = 'https://translation.googleapis.com/language/translate/v2';
-
-    final response = await http.post(
-      Uri.parse('$endpoint?key=$apiKey'),
-      body: {
-        'q': text,
-        'target': 'es',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final translatedText = json.decode(response.body)['data']['translations'][0]['translatedText'];
-      return translatedText;
-    } else {
-      return text;
-    }
-  }
-
   Future<Product?> detectObjectsWithCloudVision(BuildContext context, String imagePath) async {
-    final apiUrl = 'https://vision.googleapis.com/v1/images:annotate?key=$apiKey';
+    final apiUrl = 'https://vision.googleapis.com/v1/images:annotate?key=${Utils.googleCloudApiKey}';
     final imageFile = File(imagePath);
 
     if (!imageFile.existsSync()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Hubo una falla en la imagen, vuelve a intentarlo.',
-            style: TextStyle(color: Colors.white),
-          ),
-          duration: Duration(seconds: 5),
-          backgroundColor: Colors.red,
-        ),
+          Utils.getSnackBarError('Hubo una falla en la imagen, vuelve a intentarlo.')
       );
       return null;
     }
@@ -208,7 +173,7 @@ class SearchProductPage extends StatelessWidget {
 
             if (bestScore >= confidenceThreshold) {
               final name = bestObject['name'];
-              final translatedName = await translateToSpanish(name);
+              final translatedName = await Utils.translateToSpanish(name);
               var x = Product(
                 name: translatedName,
                 description: '',
@@ -228,14 +193,7 @@ class SearchProductPage extends StatelessWidget {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'No se encontró ningún producto relacionado después de $maxRetries intentos.',
-          style: TextStyle(color: Colors.white),
-        ),
-        duration: Duration(seconds: 5),
-        backgroundColor: Colors.red,
-      ),
+      Utils.getSnackBarError('No se encontró ningún producto relacionado después de $maxRetries intentos.')
     );
 
     return null;

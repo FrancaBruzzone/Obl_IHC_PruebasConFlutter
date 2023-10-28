@@ -9,7 +9,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class AddProductPage extends StatefulWidget {
   late final String productCode;
-
   AddProductPage({ required this.productCode });
 
   @override
@@ -18,15 +17,13 @@ class AddProductPage extends StatefulWidget {
 
 class _AddProductPageState extends State<AddProductPage> {
   final String productCode;
-
-  _AddProductPageState(this.productCode);
-
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   late TextEditingController environmentalInfoController;
   late XFile? pic;
-
   bool productNotFound = true;
+
+  _AddProductPageState(this.productCode);
 
   @override
   void initState() {

@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'dart:core';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
+import 'package:obl_ihc_pruebasconflutter/utils.dart';
+import 'package:http/http.dart' as http;
 import 'package:obl_ihc_pruebasconflutter/views/editproduct_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'package:obl_ihc_pruebasconflutter/views/recommendedproducts_section.dart';
-import 'dart:core';
 
 class BarcodeProductDetailPage extends StatefulWidget {
   final Product product;
@@ -39,20 +40,11 @@ class _BarcodeProductDetailPageState extends State<BarcodeProductDetailPage> {
     getRecommendedProducts(product,ask);
   }
 
-  String removeDiacritics(String input) {
-    return input.replaceAll(RegExp(r'[áÁ]'), 'a')
-        .replaceAll(RegExp(r'[éÉ]'), 'e')
-        .replaceAll(RegExp(r'[íÍ]'), 'i')
-        .replaceAll(RegExp(r'[óÓ]'), 'o')
-        .replaceAll(RegExp(r'[úÚ]'), 'u')
-        .replaceAll(RegExp(r'[ñÑ]'), 'n');
-  }
-
   Future<void> getRecommendedProducts(Product scannedProduct, bool ask) async {
     if (!ask) return;
 
     String filter = scannedProduct.name;
-    filter = removeDiacritics(filter);
+    filter = Utils.removeDiacritics(filter);
     filter = filter.toUpperCase();
 
     try {
@@ -77,17 +69,12 @@ class _BarcodeProductDetailPageState extends State<BarcodeProductDetailPage> {
 
           recommendedProd.add(x);
         }
-
-        setState(() {
-          recommendedProducts = recommendedProd;
-          loadingRecommendedProducts = false;
-        });
-      } else {
-        setState(() {
-          recommendedProducts = recommendedProd;
-          loadingRecommendedProducts = false;
-        });
       }
+
+      setState(() {
+        recommendedProducts = recommendedProd;
+        loadingRecommendedProducts = false;
+      });
     } catch (e) {
       setState(() {
         recommendedProducts = [];

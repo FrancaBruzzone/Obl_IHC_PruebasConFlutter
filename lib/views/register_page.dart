@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:obl_ihc_pruebasconflutter/utils.dart';
 
 class RegisterPage extends StatelessWidget {
   @override
@@ -63,14 +64,7 @@ class RegisterPage extends StatelessWidget {
                   );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'No fue posible registrar el usuario',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      duration: Duration(seconds: 5),
-                      backgroundColor: Colors.red,
-                    ),
+                    Utils.getSnackBarError('No fue posible registrar el usuario')
                   );
                 }
               },

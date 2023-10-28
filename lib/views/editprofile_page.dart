@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
+import 'package:obl_ihc_pruebasconflutter/utils.dart';
 
 class EditProfilePage extends StatefulWidget {
   final User? user;
-
   EditProfilePage(this.user);
 
   @override
@@ -75,14 +75,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } catch (e) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Error al actualizar el perfil',
-            style: TextStyle(color: Colors.white),
-          ),
-          duration: Duration(seconds: 5),
-          backgroundColor: Colors.red,
-        ),
+        Utils.getSnackBarError('Error al actualizar el perfil')
       );
     }
   }

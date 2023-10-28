@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:obl_ihc_pruebasconflutter/views/home_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/forgotpassword_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
+import 'package:obl_ihc_pruebasconflutter/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void _saveData(String value) async {
@@ -82,14 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                     }
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Credenciales incorrectas',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        duration: Duration(seconds: 5),
-                        backgroundColor: Colors.red,
-                      ),
+                      Utils.getSnackBarError('Credenciales incorrectas')
                     );
                   }
                 },

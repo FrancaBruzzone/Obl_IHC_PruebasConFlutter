@@ -3,7 +3,6 @@ import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
 
 class EditProductPage extends StatefulWidget {
   final Product product;
-
   EditProductPage(this.product);
 
   @override

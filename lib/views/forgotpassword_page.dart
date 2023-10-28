@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:obl_ihc_pruebasconflutter/utils.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   @override
@@ -26,14 +27,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'No se pudo enviar el enlace para restablecer la contraseña. Verifique su correo electrónico e inténtelo nuevamente.',
-            style: TextStyle(color: Colors.white),
-          ),
-          duration: Duration(seconds: 5),
-          backgroundColor: Colors.red,
-        ),
+        Utils.getSnackBarError('No se pudo enviar el enlace para restablecer la contraseña. Verifique su correo electrónico e inténtelo nuevamente.')
       );
     }
   }

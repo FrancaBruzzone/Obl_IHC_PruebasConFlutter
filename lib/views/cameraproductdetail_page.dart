@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'package:obl_ihc_pruebasconflutter/views/recommendedproducts_section.dart';
+import 'package:obl_ihc_pruebasconflutter/utils.dart';
 
 class CameraProductDetailPage extends StatefulWidget {
   final Product product;
@@ -37,15 +38,6 @@ class _CameraProductDetailPageState extends State<CameraProductDetailPage> {
     getRecommendedProducts(product,ask);
   }
 
-  String removeDiacritics(String input) {
-    return input.replaceAll(RegExp(r'[áÁ]'), 'a')
-        .replaceAll(RegExp(r'[éÉ]'), 'e')
-        .replaceAll(RegExp(r'[íÍ]'), 'i')
-        .replaceAll(RegExp(r'[óÓ]'), 'o')
-        .replaceAll(RegExp(r'[úÚ]'), 'u')
-        .replaceAll(RegExp(r'[ñÑ]'), 'n');
-  }
-
   Future<void> getRecommendedProducts(Product scannedProduct, bool ask) async {
     if (!ask) return;
     try {
@@ -54,7 +46,7 @@ class _CameraProductDetailPageState extends State<CameraProductDetailPage> {
       };
 
       String filter = scannedProduct.name;
-      filter = removeDiacritics(filter);
+      filter = Utils.removeDiacritics(filter);
       filter = filter.toUpperCase();
 
       http.Response response = await http.get(
@@ -78,17 +70,12 @@ class _CameraProductDetailPageState extends State<CameraProductDetailPage> {
 
           recommendedProd.add(x);
         }
-
-        setState(() {
-          recommendedProducts = recommendedProd;
-          loadingRecommendedProducts = false;
-        });
-      } else {
-        setState(() {
-          recommendedProducts = recommendedProd;
-          loadingRecommendedProducts = false;
-        });
       }
+
+      setState(() {
+        recommendedProducts = recommendedProd;
+        loadingRecommendedProducts = false;
+      });
     } catch (e) {
       setState(() {
         recommendedProducts = [];

@@ -19,7 +19,13 @@ class HomePage extends StatelessWidget {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('GreenTrace', style: TextStyle(fontSize: 24))
+              Row(
+                children: [
+                  Image.asset('images/GREENTRACE_WHITE.png', width: 40),
+                  SizedBox(width: 8),
+                  Text('GreenTrace', style: TextStyle(fontSize: 26)),
+                ],
+              )
             ],
           ),
           bottom: TabBar(

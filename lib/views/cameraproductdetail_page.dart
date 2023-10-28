@@ -37,6 +37,15 @@ class _CameraProductDetailPageState extends State<CameraProductDetailPage> {
     getRecommendedProducts(product,ask);
   }
 
+  String removeDiacritics(String input) {
+    return input.replaceAll(RegExp(r'[áÁ]'), 'a')
+        .replaceAll(RegExp(r'[éÉ]'), 'e')
+        .replaceAll(RegExp(r'[íÍ]'), 'i')
+        .replaceAll(RegExp(r'[óÓ]'), 'o')
+        .replaceAll(RegExp(r'[úÚ]'), 'u')
+        .replaceAll(RegExp(r'[ñÑ]'), 'n');
+  }
+
   Future<void> getRecommendedProducts(Product scannedProduct, bool ask) async {
     if (!ask) return;
     try {
@@ -44,8 +53,12 @@ class _CameraProductDetailPageState extends State<CameraProductDetailPage> {
         'Authorization': 'ihc',
       };
 
+      String filter = scannedProduct.name;
+      filter = removeDiacritics(filter);
+      filter = filter.toUpperCase();
+
       http.Response response = await http.get(
-          Uri.parse('https://ihc.gil.com.uy/api/querys?filter=${scannedProduct.name}'),
+          Uri.parse('https://ihc.gil.com.uy/api/querys?filter=${filter}'),
           headers: headers
       );
 

@@ -37,10 +37,12 @@ class _ArticlesPageState extends State<ArticlesPage> {
           description: a['description'] as String,
           articleUrl: a['articleUrl'] as String,
           content: a['content'] as String,
-        )).toList();
+          timestamp: a['timestamp'] as String,
+      )).toList();
 
       setState(() {
         articles = arts;
+        articles.sort((a, b) => (DateTime.parse(b.timestamp).millisecondsSinceEpoch).compareTo(DateTime.parse(a.timestamp).millisecondsSinceEpoch));
       });
     }
   }

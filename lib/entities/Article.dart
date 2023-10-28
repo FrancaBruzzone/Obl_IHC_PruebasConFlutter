@@ -4,6 +4,7 @@ class Article {
   final String description;
   final String articleUrl;
   final String content;
+  final String timestamp;
 
   Article({
     this.type,
@@ -11,5 +12,6 @@ class Article {
     required this.description,
     required this.articleUrl,
     required this.content,
+    required this.timestamp
   });
 }

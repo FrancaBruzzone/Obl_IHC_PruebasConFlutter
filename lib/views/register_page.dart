@@ -6,13 +6,19 @@ import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 // ==========================
 // Vista
 // ==========================
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool obscureText = true;
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Registrarse en GreenTrace'),
@@ -39,9 +45,17 @@ class RegisterPage extends StatelessWidget {
             SizedBox(height: 16.0),
             TextField(
               controller: passwordController,
-              obscureText: true,
+              obscureText: obscureText,
               decoration: InputDecoration(
                 labelText: 'Contraseña',
+                suffixIcon: IconButton(
+                  icon: Icon(obscureText ? Icons.visibility : Icons.visibility_off),
+                  onPressed: () {
+                    setState(() {
+                      obscureText = !obscureText;
+                    });
+                  },
+                ),
               ),
             ),
             SizedBox(height: 16.0),

@@ -76,7 +76,7 @@ class SearchProductPage extends StatelessWidget {
 
     if (data != null && data["error"] == null) {
       return Product(
-        name: data["brand"] + " " + data["name"] + " " + data["quantity"],
+        name: data["name"],
         description: data["description"],
         imageUrl: data["imageUrl"],
         environmentalInfo: data["environmentalInfo"],

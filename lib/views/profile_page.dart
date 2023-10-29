@@ -1,17 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:obl_ihc_pruebasconflutter/views/editprofile_page.dart';
-import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
-import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 import 'package:obl_ihc_pruebasconflutter/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:obl_ihc_pruebasconflutter/views/editprofile_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 
-void _saveData(String value) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setString("token", value);
-}
-
+// ==========================
+// Vista
+// ==========================
 class ProfilePage extends StatefulWidget {
   final User? user;
   ProfilePage(this.user);
@@ -23,48 +20,6 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   User? _user;
   _ProfilePageState(this._user);
-
-  Future<void> _signOut(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Utils.getLoaderDialog();
-      },
-    );
-
-    try {
-      final googleSignIn = GoogleSignIn();
-      await googleSignIn.signOut();
-      await FirebaseAuth.instance.signOut();
-      _saveData("");
-      Navigator.pop(context);
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => LoginPage(),
-        ),
-            (route) => false,
-      );
-    } catch (e) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Error al cerrar sesión',
-            style: TextStyle(color: Colors.white),
-          ),
-          duration: Duration(seconds: 5),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-
-  Future<void> _refreshUserData() async {
-    final user = await FirebaseAuth.instance.currentUser;
-    setState(() {
-      _user = user;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
                 ),
                 onPressed: () {
-                  _signOut(context);
+                  signOut(context);
                 },
                 icon: Icon(
                   Icons.exit_to_app,
@@ -171,4 +126,48 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+
+  // ==========================
+  // Lógica
+  // ==========================
+  Future<void> signOut(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Utils.getLoaderDialog();
+      },
+    );
+
+    try {
+      final googleSignIn = GoogleSignIn();
+      await googleSignIn.signOut();
+      await FirebaseAuth.instance.signOut();
+      saveData("");
+
+      Navigator.pop(context);
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ),
+            (route) => false,
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Error al cerrar sesión',
+            style: TextStyle(color: Colors.white),
+          ),
+          duration: Duration(seconds: 5),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+}
+
+void saveData(String value) async {
+  final SharedPreferences preferences = await SharedPreferences.getInstance();
+  preferences.setString("token", value);
 }

@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:obl_ihc_pruebasconflutter/entities/Article.dart';
-import 'package:obl_ihc_pruebasconflutter/views/articledetail_page.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:obl_ihc_pruebasconflutter/entities/Article.dart';
 import 'package:obl_ihc_pruebasconflutter/utils.dart';
+import 'package:obl_ihc_pruebasconflutter/views/articledetail_page.dart';
 
+// ==========================
+// Vista
+// ==========================
 class ArticlesPage extends StatefulWidget {
   @override
   State<ArticlesPage> createState() => _ArticlesPageState();
@@ -14,38 +17,6 @@ class _ArticlesPageState extends State<ArticlesPage> {
   List<Article> articles = [];
   Map? data;
   List? articlesData;
-
-  getArticles() async {
-    try {
-      http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/articles'));
-      data = json.decode(response.body);
-      articlesData = data?['articles'];
-
-      if (articlesData != null) {
-        final List<Article> arts = articlesData!
-          .map((a) => Article(
-            type: a['category'] as String,
-            title: a['title'] as String,
-            description: a['description'] as String,
-            articleUrl: a['articleUrl'] as String,
-            content: a['content'] as String,
-            timestamp: a['timestamp'] as String,
-        )).toList();
-
-        setState(() {
-          articles = arts;
-          articles.sort((a, b) => (DateTime.parse(b.timestamp).millisecondsSinceEpoch).compareTo(DateTime.parse(a.timestamp).millisecondsSinceEpoch));
-        });
-      }
-    } catch (e) {
-      return null;
-    }
-  }
-
-  Future<void> _refreshList() async {
-    await http.get(Uri.parse('https://ihc.gil.com.uy/api/articles/create'));
-    getArticles();
-  }
 
   @override
   initState() {
@@ -57,7 +28,7 @@ class _ArticlesPageState extends State<ArticlesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: _refreshList,
+        onRefresh: refreshList,
         child: ListView.builder(
           itemCount: articles.length,
           itemBuilder: (context, index) {
@@ -83,5 +54,42 @@ class _ArticlesPageState extends State<ArticlesPage> {
         ),
       ),
     );
+  }
+
+  // ==========================
+  // Lógica
+  // ==========================
+  void getArticles() async {
+    try {
+      http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/articles'));
+      data = json.decode(response.body);
+      articlesData = data?['articles'];
+
+      if (articlesData != null) {
+        final List<Article> newArticles = articlesData!
+            .map((a) => Article(
+          type: a['category'] as String,
+          title: a['title'] as String,
+          description: a['description'] as String,
+          articleUrl: a['articleUrl'] as String,
+          content: a['content'] as String,
+          timestamp: a['timestamp'] as String,
+        )).toList();
+
+        setState(() {
+          articles = newArticles;
+          articles.sort((a, b) => (DateTime.parse(b.timestamp).millisecondsSinceEpoch)
+              .compareTo(DateTime.parse(a.timestamp).millisecondsSinceEpoch)
+          );
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> refreshList() async {
+    await http.get(Uri.parse('https://ihc.gil.com.uy/api/articles/create'));
+    getArticles();
   }
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:obl_ihc_pruebasconflutter/entities/Article.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:obl_ihc_pruebasconflutter/entities/Article.dart';
 
+// ==========================
+// Vista
+// ==========================
 class ArticleDetailPage extends StatelessWidget {
   final Article article;
   ArticleDetailPage(this.article);

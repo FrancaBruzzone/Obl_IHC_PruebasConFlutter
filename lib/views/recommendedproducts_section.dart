@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
-import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
 import 'package:obl_ihc_pruebasconflutter/utils.dart';
+import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
 
+// ==========================
+// Vista
+// ==========================
 class RecommendedProductsSection extends StatelessWidget {
   final List<Product> recommendedProducts;
   RecommendedProductsSection(this.recommendedProducts);

@@ -76,7 +76,6 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
-    - images/huella_carbono.jpg
     - images/GREENTRACE_WHITE.png
     - images/loading.gif
 

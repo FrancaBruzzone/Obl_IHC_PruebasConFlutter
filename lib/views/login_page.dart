@@ -1,17 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:obl_ihc_pruebasconflutter/utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:obl_ihc_pruebasconflutter/views/home_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/forgotpassword_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/register_page.dart';
-import 'package:obl_ihc_pruebasconflutter/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-void _saveData(String value) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setString("token", value);
-}
-
+// ==========================
+// Vista
+// ==========================
 class LoginPage extends StatefulWidget {
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -20,6 +18,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late TextEditingController emailController = TextEditingController();
   late TextEditingController passwordController = TextEditingController();
+  bool obscureText = true;
 
   void setDemo() {
     setState(() {
@@ -51,9 +50,17 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 16.0),
             TextField(
               controller: passwordController,
-              obscureText: true,
+              obscureText: obscureText,
               decoration: InputDecoration(
                 labelText: 'Contraseña',
+                suffixIcon: IconButton(
+                  icon: Icon(obscureText ? Icons.visibility : Icons.visibility_off),
+                  onPressed: () {
+                    setState(() {
+                      obscureText = !obscureText;
+                    });
+                  },
+                ),
               ),
             ),
             SizedBox(height: 40),
@@ -74,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
 
                     if (userCredential.user != null) {
                       final User user = userCredential.user!;
-                      _saveData("yes");
+                      saveData("yes");
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) => HomePage(user),
@@ -151,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       if (userCredential.user != null) {
                         final User user = userCredential.user!;
-                        _saveData("yes");
+                        saveData("yes");
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => HomePage(user),
@@ -191,4 +198,12 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+}
+
+// ==========================
+// Lógica
+// ==========================
+void saveData(String value) async {
+  final SharedPreferences preferences = await SharedPreferences.getInstance();
+  preferences.setString("token", value);
 }

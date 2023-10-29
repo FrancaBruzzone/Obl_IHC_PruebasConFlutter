@@ -85,4 +85,20 @@ class Utils {
       ),
     );
   }
+
+  static void showLoaderDialog(context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Container(
+            width: 80,
+            height: 80,
+            color: Colors.white.withOpacity(0.1),
+            child: LoadingIndicator(),
+          ),
+        );
+      },
+    );
+  }
 }

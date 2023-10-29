@@ -1,13 +1,16 @@
 import 'dart:convert';
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
 import 'package:obl_ihc_pruebasconflutter/utils.dart';
-import 'package:http/http.dart' as http;
 import 'package:obl_ihc_pruebasconflutter/views/editproduct_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'package:obl_ihc_pruebasconflutter/views/recommendedproducts_section.dart';
 
+// ==========================
+// Vista
+// ==========================
 class ProductDetailPage extends StatefulWidget {
   late Product product;
   late List<Product> recommendedProducts;
@@ -43,49 +46,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     getRecommendedProducts(product, ask);
   }
 
-  Future<void> getRecommendedProducts(Product scannedProduct, bool ask) async {
-    if (!ask) return;
-
-    String filter = scannedProduct.name;
-    filter = Utils.removeDiacritics(filter);
-    filter = filter.toUpperCase();
-
-    try {
-      Map<String, String> headers = { 'Authorization': 'ihc', };
-      http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/querys?filter=${filter}'),
-          headers: headers
-      );
-
-      var data = json.decode(response.body);
-      List<Product> recommendedProd = [];
-
-      if (data != null) {
-        for (var p in data) {
-          var x = Product(
-              name: p["name"],
-              description: p["description"],
-              imageUrl: "",
-              environmentalInfo: p["environmentalInfo"],
-              category: p["category"],
-              environmentalCategory: p["environmentalCategory"]
-          );
-
-          recommendedProd.add(x);
-        }
-      }
-
-      setState(() {
-        recommendedProducts = recommendedProd;
-        loadingRecommendedProducts = false;
-      });
-    } catch (e) {
-      setState(() {
-        recommendedProducts = [];
-        loadingRecommendedProducts = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +68,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ),
               ),
               SizedBox(height: 8),
-              Text('Información Ambiental:',
+              Text('Información ambiental:',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -212,5 +172,51 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ),
       ),
     );
+  }
+
+  // ==========================
+  // Lógica
+  // ==========================
+  Future<void> getRecommendedProducts(Product scannedProduct, bool ask) async {
+    if (!ask) return;
+
+    String filter = scannedProduct.name;
+    filter = Utils.removeDiacritics(filter);
+    filter = filter.toUpperCase();
+
+    try {
+      Map<String, String> headers = { 'Authorization': 'ihc', };
+      http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/querys?filter=${filter}'),
+          headers: headers
+      );
+
+      var data = json.decode(response.body);
+      List<Product> recommendedProd = [];
+
+      if (data != null) {
+        for (var p in data) {
+          var x = Product(
+              name: p["name"],
+              description: p["description"],
+              imageUrl: "",
+              environmentalInfo: p["environmentalInfo"],
+              category: p["category"],
+              environmentalCategory: p["environmentalCategory"]
+          );
+
+          recommendedProd.add(x);
+        }
+      }
+
+      setState(() {
+        recommendedProducts = recommendedProd;
+        loadingRecommendedProducts = false;
+      });
+    } catch (e) {
+      setState(() {
+        recommendedProducts = [];
+        loadingRecommendedProducts = false;
+      });
+    }
   }
 }

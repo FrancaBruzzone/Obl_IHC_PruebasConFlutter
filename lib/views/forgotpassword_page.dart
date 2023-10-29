@@ -1,7 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:obl_ihc_pruebasconflutter/utils.dart';
+import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 
+// ==========================
+// Vista
+// ==========================
 class ForgotPasswordPage extends StatefulWidget {
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
@@ -9,28 +13,6 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController emailController = TextEditingController();
-
-  Future<void> _sendPasswordResetEmail() async {
-    try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(
-        email: emailController.text,
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Se ha enviado un enlace para restablecer la contraseña a su correo electrónico.',
-            style: TextStyle(color: Colors.white),
-          ),
-          duration: Duration(seconds: 5),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        Utils.getSnackBarError('No se pudo enviar el enlace para restablecer la contraseña. Verifique su correo electrónico e inténtelo nuevamente.')
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +44,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
               ),
               onPressed: () {
-                _sendPasswordResetEmail();
+                sendPasswordResetEmail();
+                Future.delayed(Duration(seconds: 6), () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => LoginPage(),
+                    ),
+                  );
+                });
               },
               icon: Icon(
                 Icons.email,
@@ -77,5 +66,30 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ),
       ),
     );
+  }
+
+  // ==========================
+  // Lógica
+  // ==========================
+  Future<void> sendPasswordResetEmail() async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: emailController.text,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Se ha enviado un enlace para restablecer la contraseña a su correo electrónico.',
+            style: TextStyle(color: Colors.white),
+          ),
+          duration: Duration(seconds: 5),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          Utils.getSnackBarError('No se pudo enviar el enlace para restablecer la contraseña. Verifique su correo electrónico e inténtelo nuevamente.')
+      );
+    }
   }
 }

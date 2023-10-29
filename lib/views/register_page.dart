@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:obl_ihc_pruebasconflutter/utils.dart';
+import 'package:obl_ihc_pruebasconflutter/views/login_page.dart';
 
+// ==========================
+// Vista
+// ==========================
 class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

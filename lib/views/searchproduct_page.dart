@@ -1,37 +1,113 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
+import 'package:obl_ihc_pruebasconflutter/utils.dart';
 import 'package:obl_ihc_pruebasconflutter/views/addproduct_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
-import 'dart:io';
-import 'package:obl_ihc_pruebasconflutter/utils.dart';
 
+// ==========================
+// Vista
+// ==========================
 class SearchProductPage extends StatelessWidget {
-  Future<void> _scanBarcode(BuildContext context) async {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    scanBarcode(context);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.green),
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.all(16.0),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.qr_code_scanner,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                      SizedBox(height: 8),
+                      Text('Escanear código de barras',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            SizedBox(
+              width: double
+                  .infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    takePicture(context);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.all(16.0),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.camera_alt,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                      SizedBox(height: 8),
+                      Text('Sacar foto a producto',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ==========================
+  // Lógica
+  // ==========================
+  Future<void> scanBarcode(BuildContext context) async {
     try {
       String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           "#ff6666", "Cancelar", true, ScanMode.BARCODE
       );
 
-      if (barcodeScanRes != "-1") {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return Dialog(
-              child: Container(
-                width: 80,
-                height: 80,
-                color: Colors.white.withOpacity(0.1),
-                child: LoadingIndicator(),
-              ),
-            );
-          },
-        );
-      }
+      if (barcodeScanRes != "-1")
+        Utils.showLoaderDialog(context);
 
       Product? scannedProduct = await getProductInfo(barcodeScanRes);
       Navigator.pop(context);
@@ -41,10 +117,10 @@ class SearchProductPage extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => ProductDetailPage(
-              product: scannedProduct,
-              recommendedProducts: [],
-              ask: true,
-              withBarcode: true
+                product: scannedProduct,
+                recommendedProducts: [],
+                ask: true,
+                withBarcode: true
             ),
           ),
         );
@@ -63,7 +139,7 @@ class SearchProductPage extends StatelessWidget {
 
       if (e is! FormatException) {
         ScaffoldMessenger.of(context).showSnackBar(
-          Utils.getSnackBarError('Hubo un error al escanear el código de barras, reitente más tarde.')
+            Utils.getSnackBarError('Hubo un error al escanear el código de barras, reitente más tarde.')
         );
       }
     }
@@ -88,60 +164,50 @@ class SearchProductPage extends StatelessWidget {
     return null;
   }
 
-  Future<void> _takePicture(BuildContext context) async {
-    final picker = ImagePicker();
-    final XFile? picture = await picker.pickImage(source: ImageSource.camera);
+  Future<void> takePicture(BuildContext context) async {
+    final XFile? picture = await ImagePicker().pickImage(source: ImageSource.camera);
 
     if (picture != null) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return Dialog(
-            child: Container(
-              width: 80,
-              height: 80,
-              color: Colors.white.withOpacity(0.1),
-              child: LoadingIndicator(),
-            ),
-          );
-        },
-      );
-
+      Utils.showLoaderDialog(context);
       Product? scannedProduct = await detectObjectsWithCloudVision(context, picture.path);
-      Navigator.pop(context);
 
       if (scannedProduct != null) {
         await getProductDetail(scannedProduct);
+        Navigator.pop(context);
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ProductDetailPage(
-              product: scannedProduct,
-              recommendedProducts: [],
-              ask: true,
-              withBarcode: false
+                product: scannedProduct,
+                recommendedProducts: [],
+                ask: true,
+                withBarcode: false
             ),
           ),
+        );
+      } else {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+            Utils.getSnackBarError('No se encontró ningún producto relacionado después de 3 intentos.')
         );
       }
     }
   }
 
   Future<Product?> detectObjectsWithCloudVision(BuildContext context, String imagePath) async {
-    final apiUrl = 'https://vision.googleapis.com/v1/images:annotate?key=${Utils.googleCloudApiKey}';
     final imageFile = File(imagePath);
 
     if (!imageFile.existsSync()) {
       ScaffoldMessenger.of(context).showSnackBar(
           Utils.getSnackBarError('Hubo una falla en la imagen, vuelve a intentarlo.')
       );
+
       return null;
     }
 
-    final maxRetries = 3;
     double confidenceThreshold = 0.80;
 
-    for (int retry = 0; retry < maxRetries; retry++) {
+    for (int retry = 0; retry < 3; retry++) {
       final request = {
         'requests': [
           {
@@ -152,7 +218,7 @@ class SearchProductPage extends StatelessWidget {
       };
 
       final response = await http.post(
-        Uri.parse(apiUrl),
+        Uri.parse('https://vision.googleapis.com/v1/images:annotate?key=${Utils.googleCloudApiKey}'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(request),
       );
@@ -194,10 +260,6 @@ class SearchProductPage extends StatelessWidget {
       }
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      Utils.getSnackBarError('No se encontró ningún producto relacionado después de $maxRetries intentos.')
-    );
-
     return null;
   }
 
@@ -223,89 +285,5 @@ class SearchProductPage extends StatelessWidget {
     } catch (e) {
       print(e);
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    _scanBarcode(context);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.green),
-                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                      EdgeInsets.all(16.0),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.qr_code_scanner,
-                        size: 40,
-                        color: Colors.white,
-                      ),
-                      SizedBox(height: 8),
-                      Text('Escanear código de barras',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            SizedBox(
-              width: double
-                  .infinity,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    _takePicture(context);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                      EdgeInsets.all(16.0),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.camera_alt,
-                        size: 40,
-                        color: Colors.white,
-                      ),
-                      SizedBox(height: 8),
-                      Text('Sacar foto a producto',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

@@ -1,14 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
 import 'package:obl_ihc_pruebasconflutter/utils.dart';
-import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 
+// ==========================
+// Vista
+// ==========================
 class AddProductPage extends StatefulWidget {
   late final String productCode;
   AddProductPage({ required this.productCode });
@@ -21,7 +22,7 @@ class _AddProductPageState extends State<AddProductPage> {
   final String productCode;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
-  late XFile? pic;
+  late XFile? image;
   late File? imageFile;
   bool productNotFound = true;
 
@@ -39,174 +40,6 @@ class _AddProductPageState extends State<AddProductPage> {
     nameController.dispose();
     descriptionController.dispose();
     super.dispose();
-  }
-
-  void _saveProduct() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: Container(
-            width: 80,
-            height: 80,
-            color: Colors.white.withOpacity(0.1),
-            child: LoadingIndicator(),
-          ),
-        );
-      },
-    );
-
-    Product p = await getProductInfo();
-
-    if (pic != null) {
-      await savePictureInCloud(pic);
-      await saveProductInCloud(p);
-
-      Navigator.pop(context);
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => ProductDetailPage(
-            product: p,
-            recommendedProducts: [],
-            ask: true,
-            withBarcode: true,
-          ),
-        ),
-      );
-    }
-  }
-
-  Future<void> saveProductInCloud(Product p) async {
-    String _responseText = "";
-    final String apiUrl = 'https://ihc.gil.com.uy/api/products';
-
-    final String requestBody = jsonEncode({
-      'code': this.productCode,
-      'name': p.name,
-      'brand': "brand",
-      'quantity': "quantity",
-      'description': p.description,
-      'imageUrl': p.imageUrl,
-      'environmentalInfo': p.environmentalInfo,
-      'category': p.category,
-      'environmentalCategory': p.environmentalCategory,
-    });
-
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'authorization': 'ihc'
-      },
-      body: requestBody,
-    );
-
-    if (response.statusCode == 200) {
-      setState(() {
-        _responseText = 'Respuesta del servidor: ${response.body}';
-      });
-    } else {
-      setState(() {
-        _responseText = 'Error en la solicitud: ${response.statusCode}';
-      });
-    }
-  }
-
-  Future<void> savePictureInCloud(XFile? picture) async {
-    String _responseText = "";
-    try {
-      if (picture == null) {
-        return;
-      }
-
-      File picpath = await changeFileNameOnly(File(picture.path), "${this.productCode}.jpg");
-      var headers = {'Authorization': 'ihc', 'Content-Type': 'image/jpeg'};
-      const String apiUrl = 'https://ihc.gil.com.uy/upload'; 
-
-      var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
-      final file = picpath;
-      request.files.add(await http.MultipartFile.fromPath('image', file.path));
-      request.headers.addAll(headers);
-      http.StreamedResponse response = await request.send();
-
-      if (response.statusCode == 200) {
-        setState(() async {
-          _responseText = 'Respuesta del servidor: ${await response.stream.bytesToString()}';
-        });
-      } else {
-        setState(() {
-          _responseText = 'Error en la solicitud: ${response.statusCode}';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _responseText = 'Error: $e';
-      });
-    }
-  }
-
-  Future<Product> getProductInfo() async {
-    Product p = Product(
-        name: nameController.text,
-        description: descriptionController.text,
-        environmentalInfo: '',
-        imageUrl: 'https://ihc.gil.com.uy/images/${productCode}.jpg',
-        category: '',
-        environmentalCategory: ''
-    );
-
-    await getProductDetail(p);
-
-    return p;
-  }
-
-  Future<void> getProductDetail(Product p) async {
-    String filter = p.name;
-    filter = Utils.removeDiacritics(filter);
-    filter = filter.toUpperCase();
-
-    try {
-      Map<String, String> headers = { 'Authorization': 'ihc', };
-      http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/querys/detail?filter=${filter}'),
-          headers: headers
-      );
-
-      var data = json.decode(response.body);
-
-      if (data != null) {
-        var description = data["description"] as String;
-        p.description = '${p.description}. $description';
-        p.environmentalInfo = data["environmentalInfo"] as String;
-        p.category = data["category"] as String;
-        p.environmentalCategory = data["environmentalCategory"] as String;
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<File> changeFileNameOnly(File file, String newFileName) {
-    var path = file.path;
-    var lastSeparator = path.lastIndexOf(Platform.pathSeparator);
-    var newPath = path.substring(0, lastSeparator + 1) + newFileName;
-    return file.rename(newPath);
-  }
-
-  Future<void> _takePicture(BuildContext context) async {
-    final picker = ImagePicker();
-    final XFile? picture = await picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 30,
-      maxWidth: 800,
-      maxHeight: 600,
-    );
-
-    if (picture != null) {
-       setState(() {
-        pic = picture;
-        imageFile = File(picture.path);
-      });
-    }
   }
 
   @override
@@ -280,7 +113,7 @@ class _AddProductPageState extends State<AddProductPage> {
                     backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                   ),
                   onPressed: () {
-                    _takePicture(context);
+                    takePicture(context);
                   },
                   icon: Icon(
                     Icons.camera_alt,
@@ -300,7 +133,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                   ),
-                  onPressed: _saveProduct,
+                  onPressed: saveProduct,
                   icon: Icon(
                     Icons.add,
                     color: Colors.white,
@@ -316,5 +149,152 @@ class _AddProductPageState extends State<AddProductPage> {
         ),
       ),
     );
+  }
+
+  // ==========================
+  // Lógica
+  // ==========================
+  void saveProduct() async {
+    Utils.showLoaderDialog(context);
+    Product product = await getProductInfo();
+
+    if (image != null) {
+      await saveImageInCloud(image);
+      await saveProductInCloud(product);
+
+      Navigator.pop(context);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => ProductDetailPage(
+            product: product,
+            recommendedProducts: [],
+            ask: true,
+            withBarcode: true,
+          ),
+        ),
+      );
+    }
+
+    Navigator.pop(context);
+  }
+
+  Future<Product> getProductInfo() async {
+    Product newProduct = Product(
+        name: nameController.text,
+        description: descriptionController.text,
+        environmentalInfo: '',
+        imageUrl: 'https://ihc.gil.com.uy/images/${productCode}.jpg',
+        category: '',
+        environmentalCategory: ''
+    );
+
+    try {
+      String filter = newProduct.name;
+      filter = Utils.removeDiacritics(filter);
+      filter = filter.toUpperCase();
+
+      Map<String, String> headers = { 'Authorization': 'ihc', };
+      http.Response response = await http.get(
+          Uri.parse('https://ihc.gil.com.uy/api/querys/detail?filter=${filter}'),
+          headers: headers
+      );
+
+      var data = json.decode(response.body);
+
+      if (data != null) {
+        var description = data["description"] as String;
+        newProduct.description = '${newProduct.description}. $description';
+        newProduct.environmentalInfo = data["environmentalInfo"] as String;
+        newProduct.category = data["category"] as String;
+        newProduct.environmentalCategory = data["environmentalCategory"] as String;
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    return newProduct;
+  }
+
+  Future<void> saveProductInCloud(Product product) async {
+    String _responseText = "";
+    final String apiUrl = 'https://ihc.gil.com.uy/api/products';
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'authorization': 'ihc',
+    };
+
+    final Map<String, dynamic> requestBody = {
+      'code': this.productCode,
+      'name': product.name,
+      'brand': "brand",
+      'quantity': "quantity",
+      'description': product.description,
+      'imageUrl': product.imageUrl,
+      'environmentalInfo': product.environmentalInfo,
+      'category': product.category,
+      'environmentalCategory': product.environmentalCategory,
+    };
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: headers,
+      body: jsonEncode(requestBody),
+    );
+
+    setState(() {
+      _responseText = response.statusCode == 200
+          ? 'Respuesta del servidor: ${response.body}'
+          : 'Error en la solicitud: ${response.statusCode}';
+    });
+  }
+
+  Future<void> saveImageInCloud(XFile? picture) async {
+    String _responseText = "";
+
+    if (picture == null)
+      return;
+
+    try {
+      final File filepath = File(picture.path);
+      final File picpath = await filepath.rename(
+          filepath.parent.path + Platform.pathSeparator + "${this.productCode}.jpg"
+      );
+
+      final http.MultipartRequest request = http.MultipartRequest(
+          'POST', Uri.parse('https://ihc.gil.com.uy/upload')
+      );
+      request.headers.addAll({'Authorization': 'ihc'});
+      request.files.add(await http.MultipartFile.fromPath('image', picpath.path));
+
+      final http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        _responseText = 'Respuesta del servidor: ${await response.stream.bytesToString()}';
+      } else {
+        _responseText = 'Error en la solicitud: ${response.statusCode}';
+      }
+    } catch (e) {
+      _responseText = 'Error: $e';
+    }
+
+    setState(() {
+      _responseText = _responseText;
+    });
+  }
+
+  Future<void> takePicture(BuildContext context) async {
+    final XFile? newPicture = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      imageQuality: 30,
+      maxWidth: 800,
+      maxHeight: 600,
+    );
+
+    if (newPicture != null) {
+      setState(() {
+        image = newPicture;
+        imageFile = File(newPicture.path);
+      });
+    }
   }
 }

@@ -159,6 +159,7 @@ class _EditProductPageState extends State<EditProductPage> {
   // Lógica
   // ==========================
   void saveProduct() {
+    // TODO: Incorporar la lógica para guardar los datos del producto actualizados.
     Navigator.of(context).pop();
   }
 

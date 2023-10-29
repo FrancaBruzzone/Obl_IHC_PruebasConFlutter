@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
-import 'package:obl_ihc_pruebasconflutter/views/barcodeproductdetail_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
 import 'package:obl_ihc_pruebasconflutter/utils.dart';
 
 class RecommendedProductsSection extends StatelessWidget {
@@ -27,11 +27,12 @@ class RecommendedProductsSection extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) =>
-                  BarcodeProductDetailPage(
+                  ProductDetailPage(
                     product: recommendedProducts[index],
                     recommendedProducts: recommendedProducts,
                     showDetails: false,
-                    ask:false
+                    ask:false,
+                    withBarcode: true,
                   ),
                 ),
               );

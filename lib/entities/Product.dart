@@ -2,13 +2,13 @@ import 'dart:io';
 
 class Product {
   final String name;
-  final String? code;
-  final String? description;
-  final String? imageUrl;
-  final String? environmentalInfo;
-  final String? category;
-  final String? environmentalCategory;
-  final File? imageFile;
+  String? code;
+  String? description;
+  String? imageUrl;
+  String? environmentalInfo;
+  String? category;
+  String? environmentalCategory;
+  File? imageFile;
 
   Product({
     required this.name,

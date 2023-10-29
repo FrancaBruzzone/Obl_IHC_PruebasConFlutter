@@ -3,9 +3,8 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
 import 'package:obl_ihc_pruebasconflutter/views/addproduct_page.dart';
-import 'package:obl_ihc_pruebasconflutter/views/barcodeproductdetail_page.dart';
+import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
 import 'package:http/http.dart' as http;
-import 'package:obl_ihc_pruebasconflutter/views/cameraproductdetail_page.dart';
 import 'dart:convert';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'dart:io';
@@ -41,10 +40,11 @@ class SearchProductPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => BarcodeProductDetailPage(
+            builder: (context) => ProductDetailPage(
               product: scannedProduct,
               recommendedProducts: [],
               ask: true,
+              withBarcode: true
             ),
           ),
         );
@@ -111,13 +111,15 @@ class SearchProductPage extends StatelessWidget {
       Navigator.pop(context);
 
       if (scannedProduct != null) {
+        await getProductDetail(scannedProduct);
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CameraProductDetailPage(
+            builder: (context) => ProductDetailPage(
               product: scannedProduct,
               recommendedProducts: [],
-              ask: true
+              ask: true,
+              withBarcode: false
             ),
           ),
         );
@@ -197,6 +199,30 @@ class SearchProductPage extends StatelessWidget {
     );
 
     return null;
+  }
+
+  Future<void> getProductDetail(Product scannedProduct) async {
+    String filter = scannedProduct.name;
+    filter = Utils.removeDiacritics(filter);
+    filter = filter.toUpperCase();
+
+    try {
+      Map<String, String> headers = { 'Authorization': 'ihc', };
+      http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/querys/detail?filter=${filter}'),
+          headers: headers
+      );
+
+      var data = json.decode(response.body);
+
+      if (data != null) {
+        scannedProduct.description = data["description"] as String;
+        scannedProduct.environmentalInfo = data["environmentalInfo"] as String;
+        scannedProduct.category = data["category"] as String;
+        scannedProduct.environmentalCategory = data["environmentalCategory"] as String;
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override

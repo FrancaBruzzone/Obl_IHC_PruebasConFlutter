@@ -8,36 +8,39 @@ import 'package:obl_ihc_pruebasconflutter/views/editproduct_page.dart';
 import 'package:obl_ihc_pruebasconflutter/views/loading.dart';
 import 'package:obl_ihc_pruebasconflutter/views/recommendedproducts_section.dart';
 
-class BarcodeProductDetailPage extends StatefulWidget {
-  final Product product;
+class ProductDetailPage extends StatefulWidget {
+  late Product product;
   late List<Product> recommendedProducts;
   final bool showDetails;
   final bool ask;
+  final bool withBarcode;
 
-  BarcodeProductDetailPage({
+  ProductDetailPage({
     required this.product,
     required this.recommendedProducts,
     this.showDetails = true,
-    required this.ask
+    required this.ask,
+    required this.withBarcode
   });
 
   @override
-  State<BarcodeProductDetailPage> createState() => _BarcodeProductDetailPageState(product, recommendedProducts, showDetails, ask);
+  State<ProductDetailPage> createState() => _ProductDetailPageState(product, recommendedProducts, showDetails, ask, withBarcode);
 }
 
-class _BarcodeProductDetailPageState extends State<BarcodeProductDetailPage> {
-  final Product product;
+class _ProductDetailPageState extends State<ProductDetailPage> {
+  late Product product;
   late List<Product> recommendedProducts;
   final bool showDetails;
   bool loadingRecommendedProducts = true;
   bool ask = false;
+  bool withBarcode = true;
 
-  _BarcodeProductDetailPageState(this.product, this.recommendedProducts, this.showDetails, this.ask);
+  _ProductDetailPageState(this.product, this.recommendedProducts, this.showDetails, this.ask, this.withBarcode);
 
   @override
   void initState() {
     super.initState();
-    getRecommendedProducts(product,ask);
+    getRecommendedProducts(product, ask);
   }
 
   Future<void> getRecommendedProducts(Product scannedProduct, bool ask) async {
@@ -133,17 +136,20 @@ class _BarcodeProductDetailPageState extends State<BarcodeProductDetailPage> {
               if (widget.showDetails) ...[
                 SizedBox(height: 20),
                 Center(
-                  child: Image.network(
+                  child: withBarcode ? Image.network(
                     widget.product.imageUrl!,
                     width: 100,
-                  )
+                  ) : Image.file(
+                    widget.product.imageFile!,
+                    width: 100,
+                  ),
                 ),
                 SizedBox(height: 20),
                 Center(
                   child: ElevatedButton.icon(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.green),
+                      MaterialStateProperty.all<Color>(Colors.green),
                     ),
                     onPressed: () {
                       Navigator.of(context).push(

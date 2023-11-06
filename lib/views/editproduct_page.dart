@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import 'package:obl_ihc_pruebasconflutter/entities/Product.dart';
+import 'package:obl_ihc_pruebasconflutter/utils.dart';
+import 'package:obl_ihc_pruebasconflutter/views/productdetail_page.dart';
 
 // ==========================
 // Vista
@@ -116,27 +119,6 @@ class _EditProductPageState extends State<EditProductPage> {
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                   ),
-                  onPressed: () {
-                    takePicture(context);
-                  },
-                  icon: Icon(
-                    Icons.camera_alt,
-                    color: Colors.white,
-                  ),
-                  label: Text('Sacar foto'),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Center(
-              child: SizedBox(
-                width: 140,
-                height: 40,
-                child:
-                ElevatedButton.icon(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-                  ),
                   onPressed: saveProduct,
                   icon: Icon(
                     Icons.save,
@@ -158,23 +140,72 @@ class _EditProductPageState extends State<EditProductPage> {
   // ==========================
   // Lógica
   // ==========================
-  void saveProduct() {
-    // TODO: Incorporar la lógica para guardar los datos del producto actualizados.
-    Navigator.of(context).pop();
-  }
+  void saveProduct() async {
+    Utils.showLoaderDialog(context);
+    String _responseText = "";
 
-  Future<void> takePicture(BuildContext context) async {
-    final XFile? newPicture = await ImagePicker().pickImage(
-      source: ImageSource.camera,
-      imageQuality: 30,
-      maxWidth: 800,
-      maxHeight: 600,
-    );
+    try {
+      final String apiUrl = 'https://ihc.gil.com.uy/api/products/${widget.product.code}';
+      final Map<String, String> headers = {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'authorization': 'ihc',
+      };
 
-    if (newPicture != null) {
-      setState(() {
-        imageFile = File(newPicture.path);
-      });
+      final Map<String, dynamic> requestBody = {
+        'code': widget.product.code,
+        'name': nameController.text,
+        'brand': "brand",
+        'quantity': "quantity",
+        'description': descriptionController.text,
+        'environmentalInfo': environmentalInfoController.text
+      };
+
+      final response = await http.put(
+        Uri.parse(apiUrl),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        Product newProduct = widget.product;
+
+        if (data != null) {
+          var description = data["description"] as String;
+          newProduct.code = widget.product.code;
+          newProduct.imageUrl = data["imageUrl"] as String;
+          newProduct.description = '${newProduct.description}. $description';
+          newProduct.environmentalInfo = data["environmentalInfo"] as String;
+          newProduct.category = data["category"] as String;
+          newProduct.environmentalCategory = data["environmentalCategory"] as String;
+        }
+
+        _responseText = 'Respuesta del servidor: ${response.body}';
+
+        Navigator.of(context).pop();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ProductDetailPage(
+              product: newProduct,
+              recommendedProducts: [],
+              ask: true,
+              withBarcode: true,
+            ),
+          ),
+        );
+      } else {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+            Utils.getSnackBarError('No se pudieron actualizar los datos del producto.')
+        );
+        _responseText = 'Error en la solicitud: ${response.statusCode}';
+      }
+    } catch (e) {
+      _responseText = 'Error: $e';
     }
+
+    setState(() {
+      _responseText = _responseText;
+    });
   }
 }

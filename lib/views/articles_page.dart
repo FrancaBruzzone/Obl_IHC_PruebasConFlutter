@@ -89,7 +89,7 @@ class _ArticlesPageState extends State<ArticlesPage> {
   }
 
   Future<void> refreshList() async {
-    await http.get(Uri.parse('https://ihc.gil.com.uy/api/articles/create'));
+    await http.post(Uri.parse('https://ihc.gil.com.uy/api/articles'));
     getArticles();
   }
 }

@@ -195,7 +195,7 @@ class _AddProductPageState extends State<AddProductPage> {
 
       Map<String, String> headers = { 'Authorization': 'ihc', };
       http.Response response = await http.get(
-          Uri.parse('https://ihc.gil.com.uy/api/querys/detail?filter=${filter}'),
+          Uri.parse('https://ihc.gil.com.uy/api/products/detail?filter=${filter}'),
           headers: headers
       );
 

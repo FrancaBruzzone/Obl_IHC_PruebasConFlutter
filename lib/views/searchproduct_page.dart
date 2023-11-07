@@ -270,7 +270,7 @@ class SearchProductPage extends StatelessWidget {
 
     try {
       Map<String, String> headers = { 'Authorization': 'ihc', };
-      http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/products/detail?filter=${filter}'),
+      http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/productDetails?filter=${filter}'),
           headers: headers
       );
 

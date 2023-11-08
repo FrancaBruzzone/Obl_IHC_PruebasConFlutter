@@ -125,7 +125,6 @@ class SearchProductPage extends StatelessWidget {
           ),
         );
       } else {
-        print("HOLAAAAAAAAAAAA");
         Navigator.push(
           context,
           MaterialPageRoute(

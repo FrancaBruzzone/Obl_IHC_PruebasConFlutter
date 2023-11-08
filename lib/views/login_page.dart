@@ -20,13 +20,6 @@ class _LoginPageState extends State<LoginPage> {
   late TextEditingController passwordController = TextEditingController();
   bool obscureText = true;
 
-  void setDemo() {
-    setState(() {
-      emailController.text = "demo@greentrace.uy";
-      passwordController.text = "demo1234";
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,19 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            SizedBox(height: 10.0),
-            GestureDetector(
-              onTap: () {
-                setDemo();
-              },
-              child: Text('Iniciar Demo',
-                style: TextStyle(
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ),
-            SizedBox(height: 12.0),
+            SizedBox(height: 20),
             Center(
               child: Column(
                 children: <Widget>[

@@ -125,6 +125,7 @@ class SearchProductPage extends StatelessWidget {
           ),
         );
       } else {
+        print("HOLAAAAAAAAAAAA");
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -146,11 +147,11 @@ class SearchProductPage extends StatelessWidget {
   }
 
   Future<Product?> getProductInfo(String barcode) async {
-    Map? data;
     http.Response response = await http.get(Uri.parse('https://ihc.gil.com.uy/api/products/$barcode'));
-    data = json.decode(response.body);
 
-    if (data != null && data["error"] == null) {
+    if (response.statusCode == 201) {
+      Map data = json.decode(response.body);
+
       return Product(
         name: data["name"],
         description: data["description"],

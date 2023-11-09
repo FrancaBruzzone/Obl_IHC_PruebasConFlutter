@@ -1,7 +1,14 @@
 plugins {
     id "com.android.application"
+    id 'com.google.gms.google-services'
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+}
+
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:32.4.0')
+    implementation("com.google.firebase:firebase-auth")
+    implementation 'com.facebook.android:facebook-android-sdk:[8,9)'
 }
 
 def localProperties = new Properties()
@@ -37,7 +44,7 @@ android {
         applicationId "com.example.obl_ihc_pruebasconflutter"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

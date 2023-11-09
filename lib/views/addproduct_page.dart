@@ -158,24 +158,22 @@ class _AddProductPageState extends State<AddProductPage> {
     Utils.showLoaderDialog(context);
     Product product = await getProductInfo();
 
-    if (image != null) {
+    if (image != null)
       await saveImageInCloud(image);
-      await saveProductInCloud(product);
 
-      Navigator.pop(context);
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => ProductDetailPage(
-            product: product,
-            recommendedProducts: [],
-            ask: true,
-            withBarcode: true,
-          ),
-        ),
-      );
-    }
+    await saveProductInCloud(product);
 
     Navigator.pop(context);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ProductDetailPage(
+          product: product,
+          recommendedProducts: [],
+          ask: true,
+          withBarcode: true,
+        ),
+      ),
+    );
   }
 
   Future<Product> getProductInfo() async {
@@ -195,18 +193,20 @@ class _AddProductPageState extends State<AddProductPage> {
 
       Map<String, String> headers = { 'Authorization': 'ihc', };
       http.Response response = await http.get(
-          Uri.parse('https://ihc.gil.com.uy/api/products/detail?filter=${filter}'),
+          Uri.parse('https://ihc.gil.com.uy/api/productDetails?filter=${filter}'),
           headers: headers
       );
 
-      var data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
 
-      if (data != null) {
-        var description = data["description"] as String;
-        newProduct.description = '${newProduct.description}. $description';
-        newProduct.environmentalInfo = data["environmentalInfo"] as String;
-        newProduct.category = data["category"] as String;
-        newProduct.environmentalCategory = data["environmentalCategory"] as String;
+        if (data != null) {
+          var description = data["description"] as String;
+          newProduct.description = '${newProduct.description}. $description';
+          newProduct.environmentalInfo = data["environmentalInfo"] as String;
+          newProduct.category = data["category"] as String;
+          newProduct.environmentalCategory = data["environmentalCategory"] as String;
+        }
       }
     } catch (e) {
       print(e);

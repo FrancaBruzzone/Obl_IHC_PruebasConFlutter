@@ -171,10 +171,8 @@ class _EditProductPageState extends State<EditProductPage> {
         Product newProduct = widget.product;
 
         if (data != null) {
-          var description = data["description"] as String;
-          newProduct.code = widget.product.code;
           newProduct.imageUrl = data["imageUrl"] as String;
-          newProduct.description = '${newProduct.description}. $description';
+          newProduct.description = data["description"] as String;
           newProduct.environmentalInfo = data["environmentalInfo"] as String;
           newProduct.category = data["category"] as String;
           newProduct.environmentalCategory = data["environmentalCategory"] as String;

@@ -27,7 +27,13 @@ class ProductDetailPage extends StatefulWidget {
   });
 
   @override
-  State<ProductDetailPage> createState() => _ProductDetailPageState(product, recommendedProducts, showDetails, ask, withBarcode);
+  State<ProductDetailPage> createState() => _ProductDetailPageState(
+      product,
+      recommendedProducts,
+      showDetails,
+      ask,
+      withBarcode
+  );
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
@@ -105,28 +111,30 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   ),
                 ),
                 SizedBox(height: 20),
-                Center(
-                  child: ElevatedButton.icon(
-                    style: ButtonStyle(
-                      backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.green),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => EditProductPage(widget.product),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.edit,
-                      color: Colors.white,
-                    ),
-                    label: Text('Editar',
-                      style: TextStyle(color: Colors.white),
+                if (widget.withBarcode) ...[
+                  Center(
+                    child: ElevatedButton.icon(
+                      style: ButtonStyle(
+                        backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.green),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => EditProductPage(widget.product),
+                          ),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.edit,
+                        color: Colors.white,
+                      ),
+                      label: Text('Editar',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
-                ),
+                ],
                 SizedBox(height: 6),
                 Divider(
                   color: Colors.grey,

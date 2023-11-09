@@ -152,6 +152,7 @@ class SearchProductPage extends StatelessWidget {
       Map data = json.decode(response.body);
 
       return Product(
+        code: data["code"],
         name: data["name"],
         description: data["description"],
         imageUrl: data["imageUrl"],

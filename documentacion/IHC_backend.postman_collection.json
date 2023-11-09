@@ -1,0 +1,311 @@
+{
+	"info": {
+		"_postman_id": "8054bde6-70ae-4d25-8d8e-15d755cd1967",
+		"name": "IHC_backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GreenTrace",
+			"item": [
+				{
+					"name": "Artículos",
+					"item": [
+						{
+							"name": "Crea 5 nuevos artículos",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://ihc.gil.com.uy/api/articles",
+									"protocol": "https",
+									"host": [
+										"ihc",
+										"gil",
+										"com",
+										"uy"
+									],
+									"path": [
+										"api",
+										"articles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener articulos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://ihc.gil.com.uy/api/articles",
+									"protocol": "https",
+									"host": [
+										"ihc",
+										"gil",
+										"com",
+										"uy"
+									],
+									"path": [
+										"api",
+										"articles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar todos los articulos",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "https://ihc.gil.com.uy/api/articles",
+									"protocol": "https",
+									"host": [
+										"ihc",
+										"gil",
+										"com",
+										"uy"
+									],
+									"path": [
+										"api",
+										"articles"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Productos",
+					"item": [
+						{
+							"name": "Obtener producto por código de barras",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://ihc.gil.com.uy/api/products/074312038808",
+									"protocol": "https",
+									"host": [
+										"ihc",
+										"gil",
+										"com",
+										"uy"
+									],
+									"path": [
+										"api",
+										"products",
+										"074312038808"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtiene todos los productos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://ihc.gil.com.uy/api/products",
+									"protocol": "https",
+									"host": [
+										"ihc",
+										"gil",
+										"com",
+										"uy"
+									],
+									"path": [
+										"api",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Elimina todos los productos",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "ihc",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://ihc.gil.com.uy/api/products",
+									"protocol": "https",
+									"host": [
+										"ihc",
+										"gil",
+										"com",
+										"uy"
+									],
+									"path": [
+										"api",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Crea un nuevo producto",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "ihc",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"5449000000000\",\r\n    \"name\": \"Nuevo producto\",\r\n    \"brand\": \"Producto\",\r\n    \"quantity\": \"1.5 L\",\r\n    \"description\": \"\",\r\n    \"imageUrl\": \"\",\r\n    \"environmentalInfo\": \"reciclable/biodegradable\",\r\n    \"category\": \"\",\r\n    \"environmentalCategory\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://ihc.gil.com.uy/api/products",
+									"protocol": "https",
+									"host": [
+										"ihc",
+										"gil",
+										"com",
+										"uy"
+									],
+									"path": [
+										"api",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualiza un producto por código de barras",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "ihc",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"5449000000000\",\r\n    \"name\": \"Nuevo producto\",\r\n    \"brand\": \"Producto\",\r\n    \"quantity\": \"\",\r\n    \"description\": \"\",\r\n    \"imageUrl\": \"\",\r\n    \"environmentalInfo\": \"reciclable/biodegradable\",\r\n    \"category\": \"\",\r\n    \"environmentalCategory\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://ihc.gil.com.uy/api/products/5449000000000",
+									"protocol": "https",
+									"host": [
+										"ihc",
+										"gil",
+										"com",
+										"uy"
+									],
+									"path": [
+										"api",
+										"products",
+										"5449000000000"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "OpenAI",
+					"item": [
+						{
+							"name": "Obtener productos recomendados",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "ihc",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://ihc.gil.com.uy/api/recommendedProducts?filter=COMPUTADORA PORTATIL",
+									"protocol": "https",
+									"host": [
+										"ihc",
+										"gil",
+										"com",
+										"uy"
+									],
+									"path": [
+										"api",
+										"recommendedProducts"
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "COMPUTADORA PORTATIL"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener los detalles de un producto",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "ihc",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://ihc.gil.com.uy/api/productDetails?filter=COMPUTADORA PORTATIL",
+									"protocol": "https",
+									"host": [
+										"ihc",
+										"gil",
+										"com",
+										"uy"
+									],
+									"path": [
+										"api",
+										"productDetails"
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "COMPUTADORA PORTATIL"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

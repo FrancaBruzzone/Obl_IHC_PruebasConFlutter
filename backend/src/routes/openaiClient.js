@@ -5,8 +5,7 @@ import https from "https";
 
 const router = Router();
 
-const apiKey = "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"; 
-const apiKeyGT = "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";
+const apiKeyGT = "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";
 
 const openai = new OpenAI({
   apiKey: apiKeyGT,

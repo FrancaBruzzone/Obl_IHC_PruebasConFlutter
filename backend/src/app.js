@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import multer from "multer";
 import path from "path";
+import dotenv from 'dotenv';
 
 const app = express();
 const uploadDirectory = "/home/ihc/ihc_backend/src/uploads";
@@ -31,6 +32,8 @@ import users from "./routes/users.js";
 import products from "./routes/products.js";
 import articles from "./routes/articles.js";
 import openaiClient from './routes/openaiClient.js';
+
+dotenv.config();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
